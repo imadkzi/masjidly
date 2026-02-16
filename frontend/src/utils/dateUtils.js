@@ -17,7 +17,7 @@ export function getWeekRange() {
 
 /** Get tomorrow's date in ISO format */
 export function getTomorrowISO() {
-  return new Date(new Date().setDate(new Date().getDate() + 1))
-    .toISOString()
-    .split("T")[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return tomorrow.toISOString().split("T")[0];
 }

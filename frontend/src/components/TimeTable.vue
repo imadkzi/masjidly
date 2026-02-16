@@ -1,53 +1,58 @@
 <script setup>
 import { defineProps } from "vue";
+import { PRAYER_NAMES } from "../utils/constants.js";
 
 const props = defineProps({
+  // Array of normalized PrayerRow objects (see prayerNormalization.js)
   prayers: { type: Array, default: () => [] },
+  activeName: { type: String, default: "" },
   tomorrowData: { type: Array, default: () => [] },
 });
 </script>
 
 <template>
-  <div class="timetable-container">
+  <div class="timetable-container" role="region" aria-label="Prayer times timetable">
     <div v-if="prayers.length" class="timetable">
-      <div class="timetable__header">
-        <span class="name-column"></span>
-        <span class="time-column">Start</span>
-        <span class="time-column">Jamat</span>
+      <div class="timetable__header" role="row">
+        <span class="name-column" role="columnheader" aria-label="Prayer name"></span>
+        <span class="time-column" role="columnheader" aria-label="Start time">Start</span>
+        <span class="time-column" role="columnheader" aria-label="Jamat time">Jamat</span>
       </div>
-      <ul class="timetable__list">
+      <ul class="timetable__list" role="list">
         <li
           v-for="(row, index) in prayers"
           :key="index"
           :class="{
-            jummah: row.Name === 'Jummah',
+            jummah: row.name === PRAYER_NAMES.JUMMAH,
+            active: row.name === activeName,
           }"
+          role="listitem"
+          :aria-label="`${row.name} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
+          :aria-current="row.name === activeName ? 'true' : undefined"
         >
-          <span class="name-column">{{ row.Name }}</span>
+          <span class="name-column">{{ row.name }}</span>
 
           <!-- If only one time is present -->
-          <template v-if="row['Start Time'] && !row['Jamat Time']">
-            <span class="time-column full-width">{{ row["Start Time"] }}</span>
+          <template v-if="row.startTime12 && !row.jamatTime12">
+            <time class="time-column full-width" :datetime="row.startTime24" aria-label="Start time">{{ row.startTime12 }}</time>
           </template>
 
           <!-- If both times exist & same -->
           <template
-            v-else-if="
-              row['Start Time'] === row['Jamat Time'] && row['Start Time']
-            "
+            v-else-if="row.startTime12 === row.jamatTime12 && row.startTime12"
           >
-            <span class="time-column full-width">{{ row["Start Time"] }}</span>
+            <time class="time-column full-width" :datetime="row.startTime24" aria-label="Prayer time">{{ row.startTime12 }}</time>
           </template>
 
           <!-- Otherwise, show both -->
           <template v-else>
-            <span class="time-column">{{ row["Start Time"] }}</span>
-            <span class="time-column">{{ row["Jamat Time"] }}</span>
+            <time class="time-column" :datetime="row.startTime24" aria-label="Start time">{{ row.startTime12 }}</time>
+            <time class="time-column" :datetime="row.jamatTime24" aria-label="Jamat time">{{ row.jamatTime12 }}</time>
           </template>
         </li>
       </ul>
     </div>
-    <div v-else class="no-data">
+    <div v-else class="no-data" role="status" aria-live="polite">
       <p>No data found for this week or today.</p>
     </div>
   </div>
@@ -58,9 +63,11 @@ const props = defineProps({
 
 .timetable-container {
   width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
   height: 100%;
+
+  @media (max-width: $breakpoint-mobile) {
+    height: auto; /* Allow natural height on mobile */
+  }
 
   .timetable {
     display: flex;
@@ -69,14 +76,19 @@ const props = defineProps({
     flex-grow: 1;
     height: 100%;
 
+    @media (max-width: $breakpoint-mobile) {
+      height: auto; /* Allow natural height on mobile */
+      flex-grow: 0; /* Don't force growth on mobile */
+    }
+
     &__header {
       display: flex;
-      padding: 12px 16px;
-      color: $color-secondary;
-      font-size: $font-size-medium;
+      padding: 10px 4px 14px;
+      color: var(--color-text-secondary);
+      font-size: $font-size-large;
       font-weight: $font-weight-bold;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      text-transform: none;
+      margin-bottom: 6px;
 
       .name-column {
         width: 40%;
@@ -91,43 +103,81 @@ const props = defineProps({
     &__list {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       list-style: none;
       padding: 0;
       margin: 0;
       flex-grow: 1;
+      gap: 12px;
+      justify-content: space-between;
+
+      @media (max-width: $breakpoint-mobile) {
+        flex-grow: 0; /* Don't force growth on mobile */
+        justify-content: flex-start; /* Start from top on mobile */
+      }
 
       li {
         display: flex;
         align-items: center;
-        background: #f8f9fa;
-        border-radius: $border-radius;
-        padding: $padding-small;
-        font-size: $font-size-xxxlarge;
-        margin-bottom: 12px;
-        transition: background-color 0.2s ease;
+        padding: 15px 20px;
+        font-size: 2.4rem;
+        line-height: 1.25;
+        font-variant-numeric: tabular-nums;
+        background: var(--color-panel-bg);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 12px;
+        border: 1px solid var(--color-panel-border);
+        box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
 
         @media (max-width: $breakpoint-tablet) {
-          padding: $padding-small;
-          font-size: 1.3rem;
+          padding: 12px 16px;
+          font-size: 2rem;
+        }
+
+        &:hover {
+          background: var(--color-panel-bg);
+          opacity: 0.9;
+          transform: translateY(-2px);
+          box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
         }
 
         &.jummah {
-          background: $color-jummah-bg;
-          color: $color-jummah-text;
+          color: var(--color-jummah-text);
+          background: var(--color-jummah-bg);
+          border: 1px solid var(--color-jummah-border);
+        }
+
+        &.active {
+          background: var(--color-active-bg);
+          border: 1px solid var(--color-active-border);
+          box-shadow: 0 0 20px 0 var(--color-active-glow), 0 1px 4px 0 rgba(0, 0, 0, 0.08);
         }
 
         .name-column {
           width: 40%;
           font-weight: $font-weight-bold;
-          color: $color-accent;
+          color: var(--color-text-primary);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 2.6rem;
+
+          @media (max-width: $breakpoint-tablet) {
+            font-size: 2rem;
+          }
         }
 
         .time-column {
           flex: 1;
           text-align: center;
-          color: #4a5568;
+          color: var(--color-text-primary);
           font-weight: $font-weight-extra-bold;
+          font-size: 2.6rem;
+
+          @media (max-width: $breakpoint-tablet) {
+            font-size: 2rem;
+          }
 
           &.full-width {
             flex: 2;

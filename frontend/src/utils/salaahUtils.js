@@ -1,10 +1,21 @@
-/** Utility: Convert 24-hour time to 12-hour format */
+/** Utility: Convert 24-hour time to 12-hour format (no AM/PM) */
 export function formatTimeTo12Hour(timeStr) {
   if (!timeStr) return "";
   const [hh, mm] = timeStr.split(":");
   const hour = parseInt(hh, 10);
+  if (Number.isNaN(hour)) return "";
   const formattedHour = hour % 12 || 12;
   return `${formattedHour}:${mm}`;
+}
+
+/** Utility: Convert 24-hour time to 12-hour format with AM/PM */
+export function formatTimeTo12HourWithPeriod(timeStr) {
+  if (!timeStr) return "";
+  const [hh, mm] = timeStr.split(":").map(Number);
+  if (Number.isNaN(hh) || Number.isNaN(mm)) return "";
+  const period = hh >= 12 ? "PM" : "AM";
+  const hours12 = hh % 12 || 12;
+  return `${hours12}:${mm.toString().padStart(2, "0")} ${period}`;
 }
 
 /** Utility: Process prayers */

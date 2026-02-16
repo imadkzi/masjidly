@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { fetchData } from "../utils/apiUtils";
+import { handleError } from "../utils/errorHandler";
 import { getWeekRange, getTomorrowISO } from "../utils/dateUtils";
 import {
   processDailyPrayer,
@@ -33,7 +34,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
       weekData.value = data.data || [];
       return weekData.value;
     } catch (err) {
-      error.value = err.message;
+            error.value = handleError(err, "fetchWeekData", "Unable to load weekly prayer times");
       console.error("Error fetching week data:", err);
       return [];
     } finally {
@@ -55,7 +56,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
       return tomorrowData.value;
     } catch (err) {
       tomorrowData.value = [];
-      error.value = err.message;
+            error.value = handleError(err, "fetchTomorrowData", "Unable to load tomorrow's prayer times");
       console.error("Error fetching tomorrow data:", err);
       return [];
     } finally {

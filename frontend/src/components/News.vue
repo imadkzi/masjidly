@@ -1,11 +1,12 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay } from "swiper/modules";
-import RamadanTimes from "../components/RamadanTimes.vue";
 import "swiper/swiper-bundle.css";
-import axios from "axios";
-import moment from "moment-hijri";
+import { fetchData } from "../utils/apiUtils";
+import { isRamadanNow } from "../utils/ramadanUtils";
+import { SLIDESHOW_DELAY_MS, RAMADAN_CHECK_INTERVAL_MS } from "../utils/constants";
+import { handleError } from "../utils/errorHandler";
 
 const newsItems = ref([]);
 const currentBackgroundColor = ref("");
@@ -13,34 +14,28 @@ const loading = ref(true);
 const error = ref(null);
 const isRamadan = ref(false);
 
-const checkRamadan = () => {
-  moment.locale("en");
-  const hijriDate = moment().format("iMMMM");
-  isRamadan.value = hijriDate === "Ramadhan";
-};
-checkRamadan();
+let ramadanCheckInterval = null;
 
-setInterval(checkRamadan, 1000);
+const checkRamadan = () => {
+  isRamadan.value = isRamadanNow();
+};
 
 async function fetchSlideshow() {
   loading.value = true;
   error.value = null;
 
   try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_STRAPI_URL}/api/announcements?populate=image`,
-      {
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_STRAPI_API_TOKEN}`,
-        },
-      }
-    );
+    const data = await fetchData("/api/announcements?populate=image");
 
-    newsItems.value = response.data.data.map((item) => ({
-      image: `${item.image.url}`,
-    }));
+    newsItems.value = (data?.data || [])
+      .filter((item) => item.image?.url) // Only include items with images
+      .map((item) => ({
+        image: item.image.url, // Cloudinary URL from Strapi
+        title: item.title || "",
+        background: item.backgroundColor || "",
+      }));
   } catch (err) {
-    error.value = err.message;
+            error.value = handleError(err, "fetchSlideshow", "Unable to load announcements");
     console.error("Error fetching slideshow data:", err);
   } finally {
     loading.value = false;
@@ -56,7 +51,7 @@ const onSlideChange = (swiper) => {
 
 const swiperConfig = {
   autoplay: {
-    delay: 10000,
+    delay: SLIDESHOW_DELAY_MS,
     disableOnInteraction: false,
   },
   loop: true,
@@ -64,34 +59,52 @@ const swiperConfig = {
   modules: [Autoplay],
 };
 
-onMounted(fetchSlideshow);
+onMounted(() => {
+  fetchSlideshow();
+  checkRamadan(); // Initial check
+  ramadanCheckInterval = setInterval(checkRamadan, RAMADAN_CHECK_INTERVAL_MS);
+});
+
+onUnmounted(() => {
+  if (ramadanCheckInterval) {
+    clearInterval(ramadanCheckInterval);
+    ramadanCheckInterval = null;
+  }
+});
 </script>
 
 <template>
   <div
     class="news-container"
     :style="{ backgroundColor: currentBackgroundColor }"
+    role="region"
+    aria-label="Announcements and news"
   >
-    <div v-if="loading">Loading...</div>
-    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="loading" role="status" aria-live="polite" aria-label="Loading announcements">Loading...</div>
+    <div v-if="error" class="error" role="alert" aria-live="assertive">{{ error }}</div>
     <Swiper
       :class="{ 'ramadan-news': isRamadan }"
       v-else-if="newsItems.length"
       v-bind="swiperConfig"
       @slideChange="onSlideChange"
+      aria-label="Announcements slideshow"
     >
       <SwiperSlide v-for="(item, index) in newsItems" :key="index">
         <div class="news-item">
           <figure class="news-image">
-            <img :src="item.image" :alt="item.title" />
+            <img 
+              :src="item.image" 
+              :alt="item.title || `Announcement ${index + 1}`"
+              :aria-label="item.title || `Announcement ${index + 1}`"
+              loading="lazy"
+            />
           </figure>
         </div>
       </SwiperSlide>
     </Swiper>
-    <div v-else :class="{ 'ramadan-news': isRamadan }" class="skeleton-news">
+    <div v-else :class="{ 'ramadan-news': isRamadan }" class="skeleton-news" aria-hidden="true">
       <div class="skeleton-image"></div>
     </div>
-    <RamadanTimes />
   </div>
 </template>
 
@@ -100,35 +113,54 @@ onMounted(fetchSlideshow);
 
 .news-container {
   height: 100%;
+  max-height: 100%;
   position: relative;
-  border-radius: $border-radius;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0;
 
   .swiper {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  :deep(.swiper-wrapper) {
+    height: 100%;
+  }
+
+  :deep(.swiper-slide) {
     height: 100%;
   }
 
   .news-item {
     height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
+    margin: 0;
 
     figure {
       width: 100%;
       height: 100%;
       margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       img {
         width: 100%;
         height: 100%;
-        border-radius: 8px;
+        border-radius: 12px;
+        object-fit: cover;
       }
     }
-  }
-
-  .ramadan-news {
-    height: 90%;
   }
 }
 

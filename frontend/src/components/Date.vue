@@ -1,82 +1,51 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { computed } from "vue";
 import moment from "moment-hijri";
+import { useClock } from "../composables/useClock.js";
 
-const date = ref("");
-const hijri = ref("");
-const currentTime = ref("");
-let midnightTimeout = null;
-let updateInterval = null;
+const { now } = useClock();
 
-// Update the current time (every second)
-function updateTime() {
-  const now = new Date();
-  currentTime.value = now.toLocaleTimeString("en-GB", {
+// Current time string (updating via the shared clock)
+const currentTime = computed(() =>
+  now.value.toLocaleTimeString("en-GB", {
     hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
     hour12: true,
-  });
-}
+  })
+);
 
-// Update the date (both Gregorian and Hijri)
-function updateDate() {
-  const now = new Date();
-  date.value = now.toLocaleDateString("en-GB", {
+// Gregorian date (derived from "now")
+const date = computed(() =>
+  now.value.toLocaleDateString("en-GB", {
     weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
-  });
-  // Set locale to English and calculate the Hijri date
+  })
+);
+
+// Hijri date (derived from "now")
+const hijri = computed(() => {
   moment.locale("en");
-  const hijriDate = moment(now).format("iD iMMMM iYYYY");
-  hijri.value = hijriDate;
-}
-
-// Schedule a refresh at midnight to update the date
-function scheduleMidnightRefresh() {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(now.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-  const msUntilMidnight = tomorrow - now;
-
-  midnightTimeout = setTimeout(() => {
-    updateDate();
-    updateTime();
-    // Reschedule the refresh for the next midnight
-    scheduleMidnightRefresh();
-  }, msUntilMidnight);
-}
-
-onMounted(() => {
-  updateDate();
-  updateTime();
-  scheduleMidnightRefresh();
-  updateInterval = setInterval(() => {
-    updateTime();
-  }, 1000);
-});
-
-onUnmounted(() => {
-  if (updateInterval) clearInterval(updateInterval);
-  if (midnightTimeout) clearTimeout(midnightTimeout);
+  return moment(now.value).format("iD iMMMM iYYYY");
 });
 </script>
 
 <template>
-  <header>
+  <header role="banner">
     <div class="header-row">
       <div class="header-section logo-container">
         <img src="../assets/logo-full.svg" alt="Masjidly" class="logo" />
-        <span></span>
+        <span aria-hidden="true"></span>
       </div>
       <div class="header-section date-container" v-if="date && hijri">
-        <span>{{ date }} | {{ hijri }}</span>
+        <time :datetime="now.toISOString()" :aria-label="`Current date: ${date} and Hijri date: ${hijri}`">
+          {{ date }} | {{ hijri }}
+        </time>
       </div>
       <div class="header-section time-container" v-if="currentTime">
-        <span class="time">{{ currentTime }}</span>
+        <time class="time" :datetime="now.toISOString()" :aria-label="`Current time: ${currentTime}`">{{ currentTime }}</time>
       </div>
     </div>
   </header>
@@ -87,8 +56,14 @@ onUnmounted(() => {
 
 header {
   padding: $padding-medium;
-  background: $color-primary;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid var(--color-panel-border);
+  box-shadow: 0 8px 32px 0 var(--color-panel-shadow);
+  min-height: 90px;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
   .header-row {
     display: flex;
@@ -114,19 +89,9 @@ header {
     gap: 16px;
 
     img {
-      height: 70px;
+      height: 64px;
       width: auto;
-    }
-
-    span {
-      font-size: $font-size-xlarge;
-      font-weight: $font-weight-bold;
-      color: $color-accent;
-      margin: 0;
-      padding: 0;
-      line-height: 0;
-      position: relative;
-      top: 15px;
+      transition: filter 0.3s ease;
     }
   }
 
@@ -134,10 +99,11 @@ header {
     justify-content: center;
     flex-grow: 2;
 
-    span {
+    time {
       font-size: $font-size-xlarge;
-      color: $color-secondary;
+      color: var(--color-date-text);
       font-weight: $font-weight-bold;
+      line-height: 1.4;
     }
   }
 
@@ -145,46 +111,43 @@ header {
     justify-content: flex-end;
 
     .time {
-      font-size: $font-size-xxxlarge;
-      font-weight: $font-weight-bold;
-      color: $color-accent;
+      font-size: 3rem;
+      font-weight: $font-weight-extra-bold;
+      color: var(--color-time-text);
+      letter-spacing: 0.02em;
     }
   }
 
   @media (max-width: $breakpoint-desktop) {
-    height: 70px;
-    padding: 0 12px;
+    height: 80px;
+    padding: 0 16px;
 
     .header-section {
-      padding: 0 8px;
+      padding: 0 12px;
     }
 
     .logo-container {
       img {
-        height: 40px;
-      }
-
-      span {
-        font-size: $font-size-medium;
+        height: 48px;
       }
     }
 
-    .date-container span {
-      font-size: $font-size-medium;
+    .date-container time {
+      font-size: $font-size-large;
     }
 
     .time-container .time {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
     }
   }
 
   @media (max-width: $breakpoint-mobile) {
     height: auto;
-    padding: 12px;
+    padding: 16px;
 
     .header-row {
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
     .header-section {
@@ -197,7 +160,7 @@ header {
       gap: 12px;
 
       img {
-        height: 56px;
+        height: 64px;
       }
     }
 
@@ -205,19 +168,15 @@ header {
       order: 1;
       justify-content: center;
 
-      span {
-        font-size: $font-size-small;
-        top: 10px;
+      time {
+        font-size: $font-size-medium;
+        text-align: center;
+        display: block;
       }
     }
 
     .time-container {
-      order: 2;
-      justify-content: center;
-
-      .time {
-        font-size: 2.4rem;
-      }
+      display: none; /* Hide time on mobile - phones show time in status bar */
     }
   }
 }
@@ -232,5 +191,10 @@ header {
   100% {
     background-color: #f0f0f0;
   }
+}
+
+/* Dark mode logo styling */
+[data-theme="dark"] .logo-container img {
+  filter: brightness(0) invert(1);
 }
 </style>
