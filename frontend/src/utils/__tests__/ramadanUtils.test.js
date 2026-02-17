@@ -10,7 +10,6 @@ describe("ramadanUtils", () => {
   });
 
   afterEach(() => {
-    // Clean up URL params
     window.history.replaceState({}, "", window.location.pathname);
   });
 
@@ -28,17 +27,14 @@ describe("ramadanUtils", () => {
       url.searchParams.set("ramadan", "true");
       window.history.replaceState({}, "", url);
       
-      // Mock moment to return non-Ramadan month
       vi.mock("moment-hijri", () => ({
         default: {
           locale: vi.fn(),
           format: vi.fn(() => "Shawwal"),
         },
       }));
-      
-      // This will depend on actual Hijri date, but should not be true just from URL
+
       const result = isRamadanNow({ respectUrl: false });
-      // Result depends on actual date, so we just check it's a boolean
       expect(typeof result).toBe("boolean");
     });
 

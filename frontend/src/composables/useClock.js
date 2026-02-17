@@ -1,8 +1,6 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { PRAYER_TICK_INTERVAL_MS } from "../utils/constants.js";
 
-// Shared "now" ref and interval so multiple components can subscribe
-// without starting multiple timers.
 const now = ref(new Date());
 let intervalId = null;
 let subscriberCount = 0;
@@ -21,12 +19,6 @@ function stopClockIfUnused() {
   }
 }
 
-/**
- * useClock
- *
- * Provides a reactive "now" Date that updates every PRAYER_TICK_INTERVAL_MS.
- * All consumers share a single timer under the hood.
- */
 export function useClock() {
   onMounted(() => {
     subscriberCount += 1;

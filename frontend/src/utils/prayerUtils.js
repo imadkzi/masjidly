@@ -1,6 +1,5 @@
 import { formatTimeTo12Hour } from "./salaahUtils.js";
 
-/** Convert the Friday record into a "Jummah" row */
 export function processJummah(entry) {
   if (!entry) return { Name: "Jummah", "Start Time": "", "Jamat Time": "" };
   const item = entry;

@@ -21,7 +21,6 @@ const iftarLabel = ref("Iftar");
 let isSehriUpdatedToTomorrow = false;
 let isIftarUpdatedToTomorrow = false;
 
-// Check if it's Ramadan (respects URL and env flags)
 const isRamadan = computed(() => isRamadanNow());
 
 const updateTimesFromStore = (type = "both", forTomorrow = false) => {
@@ -29,16 +28,27 @@ const updateTimesFromStore = (type = "both", forTomorrow = false) => {
 
   if (type === "both" || type === "sehri") {
     const sehriPrayer = prayers.find((prayer) =>
-      prayer.Name.includes(PRAYER_NAMES.SEHRI_END)
+      prayer.Name.includes(PRAYER_NAMES.SEHRI_END),
     );
-    const time24 = sehriPrayer?.["Start Time (24hr)"] || "";
+    let time24 = sehriPrayer?.["Start Time (24hr)"] || "";
+    let label = forTomorrow ? "Sehri End Tomorrow" : "Sehri End Today";
+    if (!forTomorrow && !time24 && store.tomorrowData.length > 0) {
+      const tomorrowSehri = store.tomorrowData.find((prayer) =>
+        prayer.Name.includes(PRAYER_NAMES.SEHRI_END),
+      );
+      const tomorrowTime24 = tomorrowSehri?.["Start Time (24hr)"] || "";
+      if (tomorrowTime24) {
+        time24 = tomorrowTime24;
+        label = "Sehri End Tomorrow";
+      }
+    }
     sehriEndTime.value = time24 ? formatTimeTo12HourWithPeriod(time24) : "";
-    sehriLabel.value = forTomorrow ? "Sehri End Tomorrow" : "Sehri End Today";
+    sehriLabel.value = label;
   }
 
   if (type === "both" || type === "iftar") {
     const iftarPrayer = prayers.find((prayer) =>
-      prayer.Name.includes(PRAYER_NAMES.MAGHRIB)
+      prayer.Name.includes(PRAYER_NAMES.MAGHRIB),
     );
     const time24 = iftarPrayer?.["Jamat Time (24hr)"] || "";
     iftarTime.value = time24 ? formatTimeTo12HourWithPeriod(time24) : "";
@@ -47,7 +57,6 @@ const updateTimesFromStore = (type = "both", forTomorrow = false) => {
 };
 
 const updateRamadanTimes = (current) => {
-  // Only update Ramadan times if it's actually Ramadan
   if (!isRamadan.value) {
     sehriEndTime.value = "";
     iftarTime.value = "";
@@ -59,20 +68,24 @@ const updateRamadanTimes = (current) => {
   }
 
   const currentSec =
-    current.getHours() * 3600 + current.getMinutes() * 60 + current.getSeconds();
+    current.getHours() * 3600 +
+    current.getMinutes() * 60 +
+    current.getSeconds();
 
-  // Check Sehri time using 24-hour time directly from store
   const sehriPrayer = store.originalTodayData.find((prayer) =>
-    prayer.Name.includes(PRAYER_NAMES.SEHRI_END)
+    prayer.Name.includes(PRAYER_NAMES.SEHRI_END),
   );
-  if (sehriPrayer && store.tomorrowData.length > 0 && !isSehriUpdatedToTomorrow) {
+  if (
+    sehriPrayer &&
+    store.tomorrowData.length > 0 &&
+    !isSehriUpdatedToTomorrow
+  ) {
     const sehriTime24 = sehriPrayer["Start Time (24hr)"] || "";
     if (sehriTime24) {
       const sehriSec = time24ToSeconds(sehriTime24);
       if (sehriSec != null && currentSec >= sehriSec) {
-        // Check if tomorrow's data has Sehri End
         const tomorrowSehri = store.tomorrowData.find((prayer) =>
-          prayer.Name.includes(PRAYER_NAMES.SEHRI_END)
+          prayer.Name.includes(PRAYER_NAMES.SEHRI_END),
         );
         if (tomorrowSehri) {
           isSehriUpdatedToTomorrow = true;
@@ -82,18 +95,20 @@ const updateRamadanTimes = (current) => {
     }
   }
 
-  // Check Maghrib (Iftar) time using 24-hour time directly from store
   const maghribPrayer = store.originalTodayData.find((prayer) =>
-    prayer.Name.includes(PRAYER_NAMES.MAGHRIB)
+    prayer.Name.includes(PRAYER_NAMES.MAGHRIB),
   );
-  if (maghribPrayer && store.tomorrowData.length > 0 && !isIftarUpdatedToTomorrow) {
+  if (
+    maghribPrayer &&
+    store.tomorrowData.length > 0 &&
+    !isIftarUpdatedToTomorrow
+  ) {
     const maghribTime24 = maghribPrayer["Jamat Time (24hr)"] || "";
     if (maghribTime24) {
       const maghribSec = time24ToSeconds(maghribTime24);
       if (maghribSec != null && currentSec >= maghribSec) {
-        // Check if tomorrow's data has Maghrib
         const tomorrowMaghrib = store.tomorrowData.find((prayer) =>
-          prayer.Name.includes(PRAYER_NAMES.MAGHRIB)
+          prayer.Name.includes(PRAYER_NAMES.MAGHRIB),
         );
         if (tomorrowMaghrib) {
           isIftarUpdatedToTomorrow = true;
@@ -115,82 +130,113 @@ const resetUpdateFlag = (current) => {
 watch(
   () => store.originalTodayData,
   (newData) => {
-    if (newData.length > 0 && isRamadan.value && !isSehriUpdatedToTomorrow && !isIftarUpdatedToTomorrow) {
-      // Only initialize if it's Ramadan and neither has been updated to tomorrow
+    if (
+      newData.length > 0 &&
+      isRamadan.value &&
+      !isSehriUpdatedToTomorrow &&
+      !isIftarUpdatedToTomorrow
+    ) {
       updateTimesFromStore("both", false);
     } else if (!isRamadan.value) {
-      // Clear Ramadan times if not Ramadan
       sehriEndTime.value = "";
       iftarTime.value = "";
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(
   () => store.tomorrowData,
   (newData) => {
     if (newData.length > 0) {
-      // Update Sehri if it's been marked for tomorrow update
       if (isSehriUpdatedToTomorrow) {
         updateTimesFromStore("sehri", true);
       }
-      // Update Iftar if it's been marked for tomorrow update
       if (isIftarUpdatedToTomorrow) {
         updateTimesFromStore("iftar", true);
       }
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
-// Drive updates from the shared clock
 watch(
   now,
   (current) => {
-    // Only update Ramadan times if it's Ramadan
     if (isRamadan.value) {
-      // First check and update Ramadan times
       updateRamadanTimes(current);
-      // Then reset flags at midnight
       resetUpdateFlag(current);
-      // Only initialize times if data is available and we haven't updated to tomorrow
-      if (store.originalTodayData.length > 0 && !isSehriUpdatedToTomorrow && !isIftarUpdatedToTomorrow) {
+      if (
+        store.originalTodayData.length > 0 &&
+        !isSehriUpdatedToTomorrow &&
+        !isIftarUpdatedToTomorrow
+      ) {
         updateTimesFromStore("both", false);
       }
     } else {
-      // Clear Ramadan times if not Ramadan
       sehriEndTime.value = "";
       iftarTime.value = "";
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 
 <template>
-  <div class="next-prayer" role="region" aria-label="Next prayer and Ramadan times">
+  <div
+    class="next-prayer"
+    role="region"
+    aria-label="Next prayer and Ramadan times"
+  >
     <div class="next-prayer__top">
       <div class="next-prayer__content">
-        <div v-if="nextName !== 'No upcoming prayers'" class="next-prayer__main">
-          <span class="next-prayer__name" aria-label="Next prayer name">{{ nextName }}</span>
-          <span class="next-prayer__separator" aria-hidden="true">STARTS IN</span>
-          <span class="next-prayer__countdown" :aria-label="`${nextCountdown} until ${nextName}`">{{ nextCountdown }}</span>
+        <div
+          v-if="nextName !== 'No upcoming prayers'"
+          class="next-prayer__main"
+        >
+          <span class="next-prayer__name" aria-label="Next prayer name">{{
+            nextName
+          }}</span>
+          <span class="next-prayer__separator" aria-hidden="true"
+            >STARTS IN</span
+          >
+          <span
+            class="next-prayer__countdown"
+            :aria-label="`${nextCountdown} until ${nextName}`"
+            >{{ nextCountdown }}</span
+          >
         </div>
         <div v-else class="next-prayer__main">
-          <span class="next-prayer__name" aria-label="Prayer status">{{ nextName }}</span>
+          <span class="next-prayer__name" aria-label="Prayer status">{{
+            nextName
+          }}</span>
         </div>
       </div>
     </div>
-    <div class="next-prayer__ramadan" v-if="isRamadan && (sehriEndTime || iftarTime)" role="region" aria-label="Ramadan times">
+    <div
+      class="next-prayer__ramadan"
+      v-if="isRamadan"
+      role="region"
+      aria-label="Ramadan times"
+    >
       <span class="ramadan-item">
         <span class="ramadan-label">{{ sehriLabel }}:</span>
-        <time class="ramadan-time" :datetime="sehriEndTime" aria-label="Sehri end time">{{ sehriEndTime }}</time>
+        <time
+          class="ramadan-time"
+          :datetime="sehriEndTime || undefined"
+          aria-label="Sehri end time"
+          >{{ sehriEndTime || "—" }}</time
+        >
       </span>
       <span class="ramadan-divider" aria-hidden="true">|</span>
       <span class="ramadan-item">
         <span class="ramadan-label">{{ iftarLabel }}:</span>
-        <time class="ramadan-time" :datetime="iftarTime" aria-label="Iftar time">{{ iftarTime }}</time>
+        <time
+          class="ramadan-time"
+          :datetime="iftarTime || undefined"
+          aria-label="Iftar time"
+          >{{ iftarTime || "—" }}</time
+        >
       </span>
     </div>
   </div>
@@ -203,14 +249,17 @@ watch(
   padding: 14px 20px;
   display: flex;
   flex-direction: column;
-  gap: 6px; /* Spacing between top section and Ramadan times */
+  gap: 6px;
   background: var(--color-next-prayer-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 16px;
   border: 1px solid var(--color-next-prayer-border);
   box-shadow: 0 2px 16px 0 var(--color-panel-shadow);
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 
   &__top {
     display: flex;
@@ -297,7 +346,6 @@ watch(
     }
 
     &__content {
-      justify-content: flex-start;
       width: 100%;
     }
 
@@ -316,6 +364,37 @@ watch(
 
     .ramadan-divider {
       display: none;
+    }
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    padding: 8px 12px;
+    gap: 4px;
+    border-radius: 10px;
+
+    &__main {
+      gap: 4px;
+    }
+
+    &__name {
+      font-size: 1rem;
+    }
+
+    &__separator {
+      font-size: 0.7rem;
+    }
+
+    &__countdown {
+      font-size: 1rem;
+    }
+
+    &__ramadan {
+      gap: 6px;
+    }
+
+    .ramadan-label,
+    .ramadan-time {
+      font-size: 0.75rem;
     }
   }
 }

@@ -1,4 +1,3 @@
-/** Get the start and end of the week in ISO format */
 export function getWeekRange() {
   const now = new Date();
   const day = now.getDay();
@@ -15,7 +14,6 @@ export function getWeekRange() {
   };
 }
 
-/** Get tomorrow's date in ISO format */
 export function getTomorrowISO() {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);

@@ -65,6 +65,10 @@ header {
   min-height: 90px;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 
+  @media (max-width: $breakpoint-mobile) {
+    border-radius: 12px;
+  }
+
   .header-row {
     display: flex;
     align-items: center;
@@ -142,12 +146,13 @@ header {
   }
 
   @media (max-width: $breakpoint-mobile) {
+    min-height: 0;
     height: auto;
-    padding: 16px;
+    padding: 8px 10px;
 
     .header-row {
       flex-direction: column;
-      gap: 16px;
+      gap: 6px;
     }
 
     .header-section {
@@ -157,10 +162,10 @@ header {
     .logo-container {
       order: 1;
       justify-content: center;
-      gap: 12px;
+      gap: 8px;
 
       img {
-        height: 64px;
+        height: 40px;
       }
     }
 
@@ -169,14 +174,15 @@ header {
       justify-content: center;
 
       time {
-        font-size: $font-size-medium;
+        font-size: 0.875rem;
+        line-height: 1.3;
         text-align: center;
         display: block;
       }
     }
 
     .time-container {
-      display: none; /* Hide time on mobile - phones show time in status bar */
+      display: none;
     }
   }
 }

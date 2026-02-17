@@ -5,8 +5,15 @@ import { Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import { fetchData } from "../utils/apiUtils";
 import { isRamadanNow } from "../utils/ramadanUtils";
-import { SLIDESHOW_DELAY_MS, RAMADAN_CHECK_INTERVAL_MS } from "../utils/constants";
+import {
+  SLIDESHOW_DELAY_MS,
+  RAMADAN_CHECK_INTERVAL_MS,
+} from "../utils/constants";
 import { handleError } from "../utils/errorHandler";
+import { useTaraweehDua } from "../composables/useTaraweehDua";
+import TaraweehDua from "./TaraweehDua.vue";
+
+const { showTaraweehDua } = useTaraweehDua();
 
 const newsItems = ref([]);
 const currentBackgroundColor = ref("");
@@ -28,14 +35,18 @@ async function fetchSlideshow() {
     const data = await fetchData("/api/announcements?populate=image");
 
     newsItems.value = (data?.data || [])
-      .filter((item) => item.image?.url) // Only include items with images
+      .filter((item) => item.image?.url)
       .map((item) => ({
-        image: item.image.url, // Cloudinary URL from Strapi
+        image: item.image.url,
         title: item.title || "",
         background: item.backgroundColor || "",
       }));
   } catch (err) {
-            error.value = handleError(err, "fetchSlideshow", "Unable to load announcements");
+    error.value = handleError(
+      err,
+      "fetchSlideshow",
+      "Unable to load announcements",
+    );
     console.error("Error fetching slideshow data:", err);
   } finally {
     loading.value = false;
@@ -61,7 +72,7 @@ const swiperConfig = {
 
 onMounted(() => {
   fetchSlideshow();
-  checkRamadan(); // Initial check
+  checkRamadan();
   ramadanCheckInterval = setInterval(checkRamadan, RAMADAN_CHECK_INTERVAL_MS);
 });
 
@@ -76,35 +87,52 @@ onUnmounted(() => {
 <template>
   <div
     class="news-container"
-    :style="{ backgroundColor: currentBackgroundColor }"
+    :style="{ backgroundColor: showTaraweehDua ? '' : currentBackgroundColor }"
     role="region"
     aria-label="Announcements and news"
   >
-    <div v-if="loading" role="status" aria-live="polite" aria-label="Loading announcements">Loading...</div>
-    <div v-if="error" class="error" role="alert" aria-live="assertive">{{ error }}</div>
-    <Swiper
-      :class="{ 'ramadan-news': isRamadan }"
-      v-else-if="newsItems.length"
-      v-bind="swiperConfig"
-      @slideChange="onSlideChange"
-      aria-label="Announcements slideshow"
-    >
-      <SwiperSlide v-for="(item, index) in newsItems" :key="index">
-        <div class="news-item">
-          <figure class="news-image">
-            <img 
-              :src="item.image" 
-              :alt="item.title || `Announcement ${index + 1}`"
-              :aria-label="item.title || `Announcement ${index + 1}`"
-              loading="lazy"
-            />
-          </figure>
-        </div>
-      </SwiperSlide>
-    </Swiper>
-    <div v-else :class="{ 'ramadan-news': isRamadan }" class="skeleton-news" aria-hidden="true">
-      <div class="skeleton-image"></div>
-    </div>
+    <TaraweehDua v-if="showTaraweehDua" />
+    <template v-else>
+      <div
+        v-if="loading"
+        role="status"
+        aria-live="polite"
+        aria-label="Loading announcements"
+      >
+        Loading...
+      </div>
+      <div v-else-if="error" class="error" role="alert" aria-live="assertive">
+        {{ error }}
+      </div>
+      <Swiper
+        v-else-if="newsItems.length"
+        :class="{ 'ramadan-news': isRamadan }"
+        v-bind="swiperConfig"
+        @slideChange="onSlideChange"
+        aria-label="Announcements slideshow"
+      >
+        <SwiperSlide v-for="(item, index) in newsItems" :key="index">
+          <div class="news-item">
+            <figure class="news-image">
+              <img
+                :src="item.image"
+                :alt="item.title || `Announcement ${index + 1}`"
+                :aria-label="item.title || `Announcement ${index + 1}`"
+                loading="lazy"
+              />
+            </figure>
+          </div>
+        </SwiperSlide>
+      </Swiper>
+      <div
+        v-else
+        :class="{ 'ramadan-news': isRamadan }"
+        class="skeleton-news"
+        aria-hidden="true"
+      >
+        <div class="skeleton-image"></div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -121,11 +149,22 @@ onUnmounted(() => {
   min-height: 0;
   padding: 0;
 
+  @media (max-width: $breakpoint-mobile) {
+    flex: 1;
+    min-height: 0;
+  }
+
   .swiper {
     height: 100%;
     width: 100%;
     padding: 0;
     margin: 0;
+    flex: 1;
+    min-height: 0;
+
+    @media (max-width: $breakpoint-mobile) {
+      min-height: 0;
+    }
   }
 
   :deep(.swiper-wrapper) {
@@ -134,6 +173,7 @@ onUnmounted(() => {
 
   :deep(.swiper-slide) {
     height: 100%;
+    box-sizing: border-box;
   }
 
   .news-item {
@@ -144,6 +184,7 @@ onUnmounted(() => {
     justify-content: center;
     padding: 0;
     margin: 0;
+    min-height: 0;
 
     figure {
       width: 100%;
@@ -153,12 +194,14 @@ onUnmounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 0;
 
       img {
         width: 100%;
         height: 100%;
         border-radius: 12px;
         object-fit: cover;
+        display: block;
       }
     }
   }

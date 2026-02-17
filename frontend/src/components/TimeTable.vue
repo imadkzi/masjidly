@@ -3,18 +3,12 @@ import { computed } from "vue";
 import { PRAYER_NAMES } from "../utils/constants.js";
 
 const props = defineProps({
-  // Array of normalized PrayerRow objects (see prayerNormalization.js)
   prayers: { type: Array, default: () => [] },
   activeName: { type: String, default: "" },
   tomorrowData: { type: Array, default: () => [] },
 });
 
-/**
- * Normalize prayer names for safe comparison (trim + lowercase).
- * This avoids subtle mismatches causing the active class not to apply.
- */
-const normalizeName = (name) =>
-  (name || "").toString().trim().toLowerCase();
+const normalizeName = (name) => (name || "").toString().trim().toLowerCase();
 
 const normalizedActiveName = computed(() => normalizeName(props.activeName));
 
@@ -24,12 +18,24 @@ const isActive = (rowName) =>
 </script>
 
 <template>
-  <div class="timetable-container" role="region" aria-label="Prayer times timetable">
+  <div
+    class="timetable-container"
+    role="region"
+    aria-label="Prayer times timetable"
+  >
     <div v-if="prayers.length" class="timetable">
       <div class="timetable__header" role="row">
-        <span class="name-column" role="columnheader" aria-label="Prayer name"></span>
-        <span class="time-column" role="columnheader" aria-label="Start time">Start</span>
-        <span class="time-column" role="columnheader" aria-label="Jamat time">Jamat</span>
+        <span
+          class="name-column"
+          role="columnheader"
+          aria-label="Prayer name"
+        ></span>
+        <span class="time-column" role="columnheader" aria-label="Start time"
+          >Start</span
+        >
+        <span class="time-column" role="columnheader" aria-label="Jamat time"
+          >Jamat</span
+        >
       </div>
       <ul class="timetable__list" role="list">
         <li
@@ -45,22 +51,39 @@ const isActive = (rowName) =>
         >
           <span class="name-column">{{ row.name }}</span>
 
-          <!-- If only one time is present -->
           <template v-if="row.startTime12 && !row.jamatTime12">
-            <time class="time-column full-width" :datetime="row.startTime24" aria-label="Start time">{{ row.startTime12 }}</time>
+            <time
+              class="time-column full-width"
+              :datetime="row.startTime24"
+              aria-label="Start time"
+              >{{ row.startTime12 }}</time
+            >
           </template>
 
-          <!-- If both times exist & same -->
           <template
             v-else-if="row.startTime12 === row.jamatTime12 && row.startTime12"
           >
-            <time class="time-column full-width" :datetime="row.startTime24" aria-label="Prayer time">{{ row.startTime12 }}</time>
+            <time
+              class="time-column full-width"
+              :datetime="row.startTime24"
+              aria-label="Prayer time"
+              >{{ row.startTime12 }}</time
+            >
           </template>
 
-          <!-- Otherwise, show both -->
           <template v-else>
-            <time class="time-column" :datetime="row.startTime24" aria-label="Start time">{{ row.startTime12 }}</time>
-            <time class="time-column" :datetime="row.jamatTime24" aria-label="Jamat time">{{ row.jamatTime12 }}</time>
+            <time
+              class="time-column"
+              :datetime="row.startTime24"
+              aria-label="Start time"
+              >{{ row.startTime12 }}</time
+            >
+            <time
+              class="time-column"
+              :datetime="row.jamatTime24"
+              aria-label="Jamat time"
+              >{{ row.jamatTime12 }}</time
+            >
           </template>
         </li>
       </ul>
@@ -79,7 +102,7 @@ const isActive = (rowName) =>
   height: 100%;
 
   @media (max-width: $breakpoint-mobile) {
-    height: auto; /* Allow natural height on mobile */
+    height: auto;
   }
 
   .timetable {
@@ -90,8 +113,8 @@ const isActive = (rowName) =>
     height: 100%;
 
     @media (max-width: $breakpoint-mobile) {
-      height: auto; /* Allow natural height on mobile */
-      flex-grow: 0; /* Don't force growth on mobile */
+      height: auto;
+      flex-grow: 0;
     }
 
     &__header {
@@ -111,6 +134,12 @@ const isActive = (rowName) =>
         flex: 1;
         text-align: center;
       }
+
+      @media (max-width: $breakpoint-mobile) {
+        padding: 8px 6px 10px;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+      }
     }
 
     &__list {
@@ -124,8 +153,9 @@ const isActive = (rowName) =>
       justify-content: space-between;
 
       @media (max-width: $breakpoint-mobile) {
-        flex-grow: 0; /* Don't force growth on mobile */
-        justify-content: flex-start; /* Start from top on mobile */
+        flex-grow: 0;
+        justify-content: flex-start;
+        gap: 10px;
       }
 
       li {
@@ -148,6 +178,13 @@ const isActive = (rowName) =>
           font-size: 2rem;
         }
 
+        @media (max-width: $breakpoint-mobile) {
+          padding: 14px 16px;
+          font-size: 1.25rem;
+          line-height: 1.35;
+          border-radius: 10px;
+        }
+
         &:hover {
           background: var(--color-panel-bg);
           opacity: 0.9;
@@ -164,7 +201,9 @@ const isActive = (rowName) =>
         &.active {
           background: var(--color-active-bg);
           border: 1px solid var(--color-active-border);
-          box-shadow: 0 0 20px 0 var(--color-active-glow), 0 1px 4px 0 rgba(0, 0, 0, 0.08);
+          box-shadow:
+            0 0 20px 0 var(--color-active-glow),
+            0 1px 4px 0 rgba(0, 0, 0, 0.08);
         }
 
         .name-column {
@@ -179,6 +218,10 @@ const isActive = (rowName) =>
           @media (max-width: $breakpoint-tablet) {
             font-size: 2rem;
           }
+
+          @media (max-width: $breakpoint-mobile) {
+            font-size: 1.25rem;
+          }
         }
 
         .time-column {
@@ -190,6 +233,10 @@ const isActive = (rowName) =>
 
           @media (max-width: $breakpoint-tablet) {
             font-size: 2rem;
+          }
+
+          @media (max-width: $breakpoint-mobile) {
+            font-size: 1.2rem;
           }
 
           &.full-width {

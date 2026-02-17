@@ -1,36 +1,73 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import SalaahView from "./views/SalaahView.vue";
 import Date from "./components/Date.vue";
 import News from "./components/News.vue";
 import ErrorBoundary from "./components/ErrorBoundary.vue";
+import { usePrayerTimesStore } from "./stores/prayerTimes";
+import { useClock } from "./composables/useClock";
+import { time24ToSeconds } from "./utils/timeUtils";
+import { PRAYER_NAMES } from "./utils/constants";
 
-// Dark mode toggle
 const isDark = ref(false);
+const store = usePrayerTimesStore();
+const { now } = useClock();
+
+function applyTheme(dark) {
+  isDark.value = dark;
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+}
+
+function shouldBeDarkByPrayerTime() {
+  const prayers = store.originalTodayData;
+  if (!prayers?.length) return null;
+  const fajr = prayers.find((p) => p.Name?.includes(PRAYER_NAMES.FAJR));
+  const maghrib = prayers.find((p) => p.Name?.includes(PRAYER_NAMES.MAGHRIB));
+  const fajrSec = fajr?.["Start Time (24hr)"] ? time24ToSeconds(fajr["Start Time (24hr)"]) : null;
+  const maghribSec = maghrib?.["Start Time (24hr)"] ? time24ToSeconds(maghrib["Start Time (24hr)"]) : null;
+  if (fajrSec == null || maghribSec == null) return null;
+  const currentSec =
+    now.value.getHours() * 3600 +
+    now.value.getMinutes() * 60 +
+    now.value.getSeconds();
+  return currentSec >= maghribSec || currentSec < fajrSec;
+}
 
 onMounted(() => {
-  // Check for saved preference or system preference
   const savedTheme = localStorage.getItem("theme");
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  
-  if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-    isDark.value = true;
-    document.documentElement.setAttribute("data-theme", "dark");
-  } else {
-    isDark.value = false;
-    document.documentElement.setAttribute("data-theme", "light");
+
+  if (savedTheme === "dark" || savedTheme === "light") {
+    applyTheme(savedTheme === "dark");
+    return;
   }
 
-  // Listen for system theme changes
+  const darkByTime = shouldBeDarkByPrayerTime();
+  if (darkByTime !== null) {
+    applyTheme(darkByTime);
+  } else {
+    applyTheme(prefersDark);
+  }
+
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
     if (!localStorage.getItem("theme")) {
-      isDark.value = e.matches;
-      document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
+      const darkByTime = shouldBeDarkByPrayerTime();
+      if (darkByTime !== null) applyTheme(darkByTime);
+      else applyTheme(e.matches);
     }
   });
 });
 
-// Toggle function (can be called from UI if needed)
+watch(
+  [now, () => store.originalTodayData],
+  () => {
+    if (localStorage.getItem("theme")) return;
+    const darkByTime = shouldBeDarkByPrayerTime();
+    if (darkByTime !== null) applyTheme(darkByTime);
+  },
+  { deep: true },
+);
+
 const toggleTheme = () => {
   isDark.value = !isDark.value;
   const theme = isDark.value ? "dark" : "light";
@@ -72,7 +109,6 @@ const toggleTheme = () => {
 <style lang="scss">
 @import "./styles/stylesetter";
 
-// Layout constants (matching JS constants)
 $layout-max-width: 1920px;
 $layout-header-height-offset: 135px;
 $layout-grid-gap-small: 16px;
@@ -146,14 +182,19 @@ $layout-shell-margin-bottom: 8px;
     flex: 1;
     margin-top: $layout-shell-margin-top;
     margin-bottom: $layout-shell-margin-bottom;
-    min-height: 0; /* Allow flex child to shrink */
+    min-height: 0;
     max-height: calc(100vh - #{$layout-header-height-offset});
     display: flex;
     flex-direction: column;
 
     @media (max-width: $breakpoint-mobile) {
-      max-height: none; /* Remove height constraint on mobile to allow full expansion */
-      flex: none; /* Allow natural height on mobile */
+      margin-top: 6px;
+      margin-bottom: 4px;
+      flex: 1;
+      min-height: 0;
+      max-height: none;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
   }
 
@@ -162,9 +203,9 @@ $layout-shell-margin-bottom: 8px;
     grid-template-columns: 1.05fr 1.15fr;
     gap: $layout-grid-gap-small;
     align-items: stretch;
-    height: 100%; /* Fill the full height of the main container */
-    flex: 1; /* Take up all available space */
-    min-height: 0; /* Allow grid to shrink */
+    height: 100%;
+    flex: 1;
+    min-height: 0;
 
     @media (min-width: $breakpoint-large) {
       grid-template-columns: 35fr 65fr;
@@ -174,15 +215,22 @@ $layout-shell-margin-bottom: 8px;
     @media (max-width: $breakpoint-desktop) {
       grid-template-columns: 1fr;
     }
+
+    @media (max-width: $breakpoint-mobile) {
+      gap: 8px;
+      min-height: 0;
+      grid-template-rows: auto 1fr;
+      align-items: start;
+    }
   }
 
   &__panel {
     padding: $layout-panel-padding-default-y $layout-panel-padding-default-x;
     display: flex;
     flex-direction: column;
-    min-height: 0; /* allow children to control scroll */
-    max-height: 100%; /* Prevent overflow */
-    overflow: hidden; /* Prevent content from overflowing */
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
     background: var(--color-panel-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -196,13 +244,23 @@ $layout-shell-margin-bottom: 8px;
     }
 
     @media (max-width: $breakpoint-mobile) {
-      max-height: none; /* Remove height constraint on mobile */
-      overflow: visible; /* Allow content to expand on mobile */
+      padding: 10px 12px;
+      border-radius: 12px;
+      min-height: 0;
+      max-height: 100%;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
     }
   }
 
   &__panel--timetable {
     padding: $layout-panel-padding-timetable-y $layout-panel-padding-timetable-x;
+
+    @media (max-width: $breakpoint-mobile) {
+      overflow: visible;
+      max-height: none;
+      min-height: auto;
+    }
   }
 
   &__panel--news {
@@ -211,10 +269,16 @@ $layout-shell-margin-bottom: 8px;
     @media (min-width: $breakpoint-large) {
       padding: $layout-panel-padding-news-large;
     }
+
+    @media (max-width: $breakpoint-mobile) {
+      min-height: 200px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
   }
 }
 
-/* Global reset and Apple-style glass background */
 * {
   margin: 0;
   padding: 0;
@@ -231,7 +295,6 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* Auto dark mode based on system preference */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --color-bg-primary: #0f172a;
@@ -269,7 +332,6 @@ body {
   }
 }
 
-/* Subtle scrollbars (for mobile) */
 ::-webkit-scrollbar {
   width: 8px;
 }

@@ -8,7 +8,6 @@ onErrorCaptured((err, instance, info) => {
   error.value = err;
   errorInfo.value = info;
   console.error("Error caught by boundary:", err, info);
-  // Return false to prevent the error from propagating further
   return false;
 });
 

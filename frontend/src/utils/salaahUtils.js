@@ -1,4 +1,3 @@
-/** Utility: Convert 24-hour time to 12-hour format (no AM/PM) */
 export function formatTimeTo12Hour(timeStr) {
   if (!timeStr) return "";
   const [hh, mm] = timeStr.split(":");
@@ -8,7 +7,6 @@ export function formatTimeTo12Hour(timeStr) {
   return `${formattedHour}:${mm}`;
 }
 
-/** Utility: Convert 24-hour time to 12-hour format with AM/PM */
 export function formatTimeTo12HourWithPeriod(timeStr) {
   if (!timeStr) return "";
   const [hh, mm] = timeStr.split(":").map(Number);
@@ -18,7 +16,6 @@ export function formatTimeTo12HourWithPeriod(timeStr) {
   return `${hours12}:${mm.toString().padStart(2, "0")} ${period}`;
 }
 
-/** Utility: Process prayers */
 export function processDailyPrayer(entry) {
   if (!entry) return [];
   const item = entry;
@@ -41,7 +38,6 @@ export function processDailyPrayer(entry) {
   }));
 }
 
-/** Utility: Process prayers */
 export function processTomorrowsPrayer(entry) {
   if (!entry) return [];
   const item = entry;
@@ -64,7 +60,6 @@ export function processTomorrowsPrayer(entry) {
   }));
 }
 
-/** Format X seconds => "Xh Ym" or "Xm Ys" or "Xs" */
 export function formatCountdown(seconds) {
   if (seconds >= 3600) {
     const hours = Math.floor(seconds / 3600);

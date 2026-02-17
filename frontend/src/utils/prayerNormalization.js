@@ -8,13 +8,6 @@
  * @property {any} raw Original row object for backward compatibility
  */
 
-/**
- * Normalize a "raw" prayer row coming from the existing helpers
- * (Name, Start Time (24hr), etc.) into a consistent shape.
- *
- * @param {any} row
- * @returns {PrayerRowNormalized}
- */
 export function normalizePrayerRow(row) {
   if (!row) {
     return {

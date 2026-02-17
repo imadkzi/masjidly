@@ -1,12 +1,9 @@
-// Breakpoints
 $breakpoint-mobile: 600px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
 $breakpoint-large: 1200px;
 
-// CSS Variables for Theme Support
 :root {
-  // Light mode colors (default)
   --color-bg-primary: #f5f7f6;
   --color-bg-secondary: #f0f3f1;
   --color-bg-tertiary: #eaeef0;
@@ -16,16 +13,16 @@ $breakpoint-large: 1200px;
   --color-panel-bg: rgba(255, 255, 255, 0.1);
   --color-panel-border: rgba(255, 255, 255, 0.2);
   --color-panel-shadow: rgba(31, 38, 135, 0.37);
-  --color-next-prayer-bg: rgba(187, 247, 208, 0.2);
-  --color-next-prayer-border: rgba(34, 197, 94, 0.25);
-  --color-next-prayer-text: #052e16;
-  --color-next-prayer-text-dark: #022c22;
-  --color-active-bg: rgba(187, 247, 208, 0.25);
-  --color-active-border: rgba(34, 197, 94, 0.3);
-  --color-active-glow: rgba(34, 197, 94, 0.25);
-  --color-jummah-bg: rgba(255, 107, 0, 0.3);
-  --color-jummah-border: rgba(255, 107, 0, 0.6);
-  --color-jummah-text: #ff6b00;
+  --color-next-prayer-bg: rgba(134, 239, 172, 0.45);
+  --color-next-prayer-border: rgba(34, 197, 94, 0.5);
+  --color-next-prayer-text: #032210;
+  --color-next-prayer-text-dark: #021a0d;
+  --color-active-bg: rgba(134, 239, 172, 0.5);
+  --color-active-border: rgba(34, 197, 94, 0.55);
+  --color-active-glow: rgba(34, 197, 94, 0.4);
+  --color-jummah-bg: rgba(251, 146, 60, 0.5);
+  --color-jummah-border: rgba(234, 88, 12, 0.75);
+  --color-jummah-text: #ea580c;
   --color-scrollbar-track: #e5e7eb;
   --color-scrollbar-thumb: #9ca3af;
   --color-scrollbar-thumb-hover: #6b7280;
@@ -36,7 +33,6 @@ $breakpoint-large: 1200px;
 }
 
 [data-theme="dark"] {
-  // Dark mode colors
   --color-bg-primary: #0f172a;
   --color-bg-secondary: #1e293b;
   --color-bg-tertiary: #334155;
@@ -65,7 +61,6 @@ $breakpoint-large: 1200px;
   --color-time-text: rgba(255, 255, 255, 0.95);
 }
 
-// Legacy SCSS variables (for backward compatibility)
 $color-background: var(--color-bg-primary);
 $color-primary: #ffffff;
 $color-secondary: #666;
@@ -73,12 +68,10 @@ $color-accent: var(--color-text-accent);
 $color-jummah-bg: var(--color-jummah-bg);
 $color-jummah-text: var(--color-jummah-text);
 
-// Additional Colors
-$color-success: #c6f6d5; // Light green for next prayer
-$color-error: #f56565; // Example error color
-$color-info: #63b3ed; // Example info color
+$color-success: #c6f6d5;
+$color-error: #f56565;
+$color-info: #63b3ed;
 
-// Font Sizes
 $font-size-small: 1rem;
 $font-size-medium: 1.2rem;
 $font-size-large: 1.6rem;
@@ -86,12 +79,10 @@ $font-size-xlarge: 2rem;
 $font-size-xxlarge: 2.2rem;
 $font-size-xxxlarge: 2.7rem;
 
-// Font Weights
 $font-weight-normal: 400;
 $font-weight-bold: 600;
 $font-weight-extra-bold: 700;
 
-// Other Variables
 $border-radius: 12px;
 $padding-small: 10px;
 $padding-medium: 16px;

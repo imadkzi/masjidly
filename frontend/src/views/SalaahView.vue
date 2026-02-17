@@ -39,25 +39,29 @@ const {
 .salaah-view {
   display: flex;
   flex-direction: column;
-  height: 100%; /* Fill the full height of the panel */
-  min-height: 0; /* Allow flex child to shrink */
-  gap: 8px; /* Space between NextPrayer and TimeTable */
+  height: 100%;
+  min-height: 0;
+  gap: 8px;
 
   @media (max-width: $breakpoint-mobile) {
-    height: auto; /* Allow natural height on mobile */
+    height: auto;
     min-height: auto;
+    gap: 6px;
   }
 }
 
 .timetable-wrapper {
-  flex: 1; /* TimeTable takes up remaining space */
-  min-height: 0; /* Allow it to shrink if needed */
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 
   @media (max-width: $breakpoint-mobile) {
-    flex: none; /* Allow natural height on mobile */
+    flex: none;
     min-height: auto;
+    overflow: visible;
   }
 }
 
