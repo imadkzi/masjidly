@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from "vue";
+import { computed } from "vue";
 import { PRAYER_NAMES } from "../utils/constants.js";
 
 const props = defineProps({
@@ -8,6 +8,19 @@ const props = defineProps({
   activeName: { type: String, default: "" },
   tomorrowData: { type: Array, default: () => [] },
 });
+
+/**
+ * Normalize prayer names for safe comparison (trim + lowercase).
+ * This avoids subtle mismatches causing the active class not to apply.
+ */
+const normalizeName = (name) =>
+  (name || "").toString().trim().toLowerCase();
+
+const normalizedActiveName = computed(() => normalizeName(props.activeName));
+
+const isActive = (rowName) =>
+  normalizedActiveName.value &&
+  normalizeName(rowName) === normalizedActiveName.value;
 </script>
 
 <template>
@@ -24,11 +37,11 @@ const props = defineProps({
           :key="index"
           :class="{
             jummah: row.name === PRAYER_NAMES.JUMMAH,
-            active: row.name === activeName,
+            active: isActive(row.name),
           }"
           role="listitem"
           :aria-label="`${row.name} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
-          :aria-current="row.name === activeName ? 'true' : undefined"
+          :aria-current="isActive(row.name) ? 'true' : undefined"
         >
           <span class="name-column">{{ row.name }}</span>
 
