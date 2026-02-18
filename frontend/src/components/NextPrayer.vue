@@ -390,11 +390,12 @@ watch(
 
     &__ramadan {
       gap: 6px;
+      flex-direction: column;
     }
 
     .ramadan-label,
     .ramadan-time {
-      font-size: 0.75rem;
+      font-size: 1rem;
     }
   }
 }

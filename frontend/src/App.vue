@@ -193,7 +193,6 @@ $layout-shell-margin-bottom: 8px;
       flex: 1;
       min-height: 0;
       max-height: none;
-      overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
   }

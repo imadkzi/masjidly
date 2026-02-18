@@ -220,7 +220,7 @@ const isActive = (rowName) =>
           }
 
           @media (max-width: $breakpoint-mobile) {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
           }
         }
 
@@ -236,7 +236,7 @@ const isActive = (rowName) =>
           }
 
           @media (max-width: $breakpoint-mobile) {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
           }
 
           &.full-width {
