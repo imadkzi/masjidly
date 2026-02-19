@@ -377,15 +377,15 @@ watch(
     }
 
     &__name {
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
     &__separator {
-      font-size: 0.7rem;
+      font-size: 0.9rem;
     }
 
     &__countdown {
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
 
     &__ramadan {
@@ -395,7 +395,7 @@ watch(
 
     .ramadan-label,
     .ramadan-time {
-      font-size: 1rem;
+      font-size: 1.2rem;
     }
   }
 }
