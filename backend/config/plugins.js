@@ -27,4 +27,7 @@ module.exports = ({ env }) => ({
       },
     },
   },
+  // "strapi-plugin-tablify": {
+  //   enabled: true,
+  // },
 });
