@@ -97,6 +97,13 @@ header {
       width: auto;
       transition: filter 0.3s ease;
     }
+
+    span {
+      font-size: 1.75rem;
+      font-weight: $font-weight-bold;
+      color: var(--color-text-primary);
+      letter-spacing: 0.02em;
+    }
   }
 
   .date-container {
@@ -134,6 +141,10 @@ header {
       img {
         height: 48px;
       }
+
+      span {
+        font-size: 1.5rem;
+      }
     }
 
     .date-container time {
@@ -166,6 +177,10 @@ header {
 
       img {
         height: 40px;
+      }
+
+      span {
+        font-size: 1.25rem;
       }
     }
 
