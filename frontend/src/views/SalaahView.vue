@@ -3,6 +3,10 @@ import NextPrayer from "../components/NextPrayer.vue";
 import TimeTable from "../components/TimeTable.vue";
 import { usePrayerSchedule } from "../composables/usePrayerSchedule.js";
 
+const props = defineProps({
+  showDayLabels: { type: Boolean, default: true },
+});
+
 const {
   prayers,
   nextPrayerName,
@@ -25,6 +29,7 @@ const {
         :prayers="prayers"
         :activeName="currentPrayerName"
         :tomorrowData="tomorrowData"
+        :show-day-labels="props.showDayLabels"
       />
     </div>
 
@@ -50,9 +55,23 @@ const {
   }
 }
 
+.salaah-view__schedule-label {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+  }
+}
+
 .timetable-wrapper {
   flex: 1;
   min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   overflow: auto;

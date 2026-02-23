@@ -9,6 +9,7 @@ import {
   SLIDESHOW_DELAY_MS,
   RAMADAN_CHECK_INTERVAL_MS,
 } from "../utils/constants";
+import { scheduleAtMidnight } from "../utils/scheduleUtils";
 import { handleError } from "../utils/errorHandler";
 import { useTaraweehDua } from "../composables/useTaraweehDua";
 import TaraweehDua from "./TaraweehDua.vue";
@@ -22,6 +23,7 @@ const error = ref(null);
 const isRamadan = ref(false);
 
 let ramadanCheckInterval = null;
+let cancelMidnightRefetch = null;
 
 const checkRamadan = () => {
   isRamadan.value = isRamadanNow();
@@ -74,12 +76,17 @@ onMounted(() => {
   fetchSlideshow();
   checkRamadan();
   ramadanCheckInterval = setInterval(checkRamadan, RAMADAN_CHECK_INTERVAL_MS);
+  cancelMidnightRefetch = scheduleAtMidnight(fetchSlideshow);
 });
 
 onUnmounted(() => {
   if (ramadanCheckInterval) {
     clearInterval(ramadanCheckInterval);
     ramadanCheckInterval = null;
+  }
+  if (cancelMidnightRefetch) {
+    cancelMidnightRefetch();
+    cancelMidnightRefetch = null;
   }
 });
 </script>

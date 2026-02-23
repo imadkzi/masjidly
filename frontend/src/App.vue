@@ -1,103 +1,62 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
 import SalaahView from "./views/SalaahView.vue";
 import Date from "./components/Date.vue";
 import News from "./components/News.vue";
+import RamadanBanner from "./components/RamadanBanner.vue";
 import ErrorBoundary from "./components/ErrorBoundary.vue";
-import { usePrayerTimesStore } from "./stores/prayerTimes";
-import { useClock } from "./composables/useClock";
-import { time24ToSeconds } from "./utils/timeUtils";
-import { PRAYER_NAMES } from "./utils/constants";
+import { usePrayerTheme } from "./composables/usePrayerTheme";
 
-const isDark = ref(false);
-const store = usePrayerTimesStore();
-const { now } = useClock();
-
-function applyTheme(dark) {
-  isDark.value = dark;
-  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
-}
-
-function shouldBeDarkByPrayerTime() {
-  const prayers = store.originalTodayData;
-  if (!prayers?.length) return null;
-  const fajr = prayers.find((p) => p.Name?.includes(PRAYER_NAMES.FAJR));
-  const maghrib = prayers.find((p) => p.Name?.includes(PRAYER_NAMES.MAGHRIB));
-  const fajrSec = fajr?.["Start Time (24hr)"] ? time24ToSeconds(fajr["Start Time (24hr)"]) : null;
-  const maghribSec = maghrib?.["Start Time (24hr)"] ? time24ToSeconds(maghrib["Start Time (24hr)"]) : null;
-  if (fajrSec == null || maghribSec == null) return null;
-  const currentSec =
-    now.value.getHours() * 3600 +
-    now.value.getMinutes() * 60 +
-    now.value.getSeconds();
-  return currentSec >= maghribSec || currentSec < fajrSec;
-}
-
-onMounted(() => {
-  const savedTheme = localStorage.getItem("theme");
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-  if (savedTheme === "dark" || savedTheme === "light") {
-    applyTheme(savedTheme === "dark");
-    return;
-  }
-
-  const darkByTime = shouldBeDarkByPrayerTime();
-  if (darkByTime !== null) {
-    applyTheme(darkByTime);
-  } else {
-    applyTheme(prefersDark);
-  }
-
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-    if (!localStorage.getItem("theme")) {
-      const darkByTime = shouldBeDarkByPrayerTime();
-      if (darkByTime !== null) applyTheme(darkByTime);
-      else applyTheme(e.matches);
-    }
-  });
-});
-
-watch(
-  [now, () => store.originalTodayData],
-  () => {
-    if (localStorage.getItem("theme")) return;
-    const darkByTime = shouldBeDarkByPrayerTime();
-    if (darkByTime !== null) applyTheme(darkByTime);
-  },
-  { deep: true },
-);
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value;
-  const theme = isDark.value ? "dark" : "light";
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-};
+const { isDark, toggleTheme } = usePrayerTheme();
+const showDayLabels = import.meta.env.VITE_SHOW_PRAYER_DAY_LABELS === "true";
 </script>
 
 <template>
   <ErrorBoundary>
     <div class="tv-shell">
-      <button 
-        @click="toggleTheme" 
+      <button
+        @click="toggleTheme"
         class="theme-toggle"
+        type="button"
         :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-        title="Toggle dark mode"
+        :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
       >
-        <span v-if="isDark">☀️</span>
-        <span v-else>🌙</span>
+        <span class="theme-toggle__icon" aria-hidden="true">
+          <svg v-if="isDark" class="theme-toggle__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg v-else class="theme-toggle__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__label">{{ isDark ? 'Light' : 'Dark' }}</span>
       </button>
       <header class="tv-shell__header" role="banner">
         <Date />
       </header>
 
       <main class="tv-shell__main" role="main">
+        <RamadanBanner />
         <section class="tv-shell__grid">
-          <div class="tv-shell__panel tv-shell__panel--timetable" role="region" aria-label="Prayer times">
-            <SalaahView />
+          <div
+            class="tv-shell__panel tv-shell__panel--timetable"
+            role="region"
+            aria-label="Prayer times"
+          >
+            <SalaahView :show-day-labels="showDayLabels" />
           </div>
-          <div class="tv-shell__panel tv-shell__panel--news" role="region" aria-label="Announcements">
+          <div
+            class="tv-shell__panel tv-shell__panel--news"
+            role="region"
+            aria-label="Announcements"
+          >
             <News />
           </div>
         </section>
@@ -123,56 +82,79 @@ $layout-panel-padding-timetable-y: 12px;
 $layout-panel-padding-timetable-x: 16px;
 $layout-shell-padding-top: 8px;
 $layout-shell-padding-right: 8px;
-$layout-shell-padding-bottom: 16px;
+$layout-shell-padding-bottom: 0;
 $layout-shell-padding-left: 8px;
-$layout-shell-margin-top: 12px;
-$layout-shell-margin-bottom: 8px;
+$layout-shell-main-gap: 10px;
 
 .theme-toggle {
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 1000;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
+  padding: 10px 16px;
+  border-radius: 9999px;
   border: 1px solid var(--color-panel-border);
   background: var(--color-panel-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px 0 var(--color-panel-shadow);
 
   &:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     box-shadow: 0 4px 12px 0 var(--color-panel-shadow);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  &__label {
+    white-space: nowrap;
   }
 
   @media (max-width: $breakpoint-mobile) {
     bottom: 12px;
     right: 12px;
-    width: 40px;
-    height: 40px;
-    font-size: 1.2rem;
+    padding: 8px 12px;
+    gap: 6px;
+    font-size: 0.85rem;
+
+    .theme-toggle__svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 
 .tv-shell {
+  width: 100%;
   min-height: 100vh;
   max-width: $layout-max-width;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   padding: $layout-shell-padding-top $layout-shell-padding-right $layout-shell-padding-bottom $layout-shell-padding-left;
+  overflow-x: hidden;
 
   &__header {
     flex-shrink: 0;
@@ -180,12 +162,12 @@ $layout-shell-margin-bottom: 8px;
 
   &__main {
     flex: 1;
-    margin-top: $layout-shell-margin-top;
-    margin-bottom: $layout-shell-margin-bottom;
+    margin-top: $layout-shell-main-gap;
     min-height: 0;
     max-height: calc(100vh - #{$layout-header-height-offset});
     display: flex;
     flex-direction: column;
+    gap: $layout-shell-main-gap;
 
     @media (max-width: $breakpoint-mobile) {
       margin-top: 6px;
@@ -205,6 +187,7 @@ $layout-shell-margin-bottom: 8px;
     height: 100%;
     flex: 1;
     min-height: 0;
+    min-width: 0;
 
     @media (min-width: $breakpoint-large) {
       grid-template-columns: 35fr 65fr;
@@ -228,6 +211,7 @@ $layout-shell-margin-bottom: 8px;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    min-width: 0;
     max-height: 100%;
     overflow: hidden;
     background: var(--color-panel-bg);

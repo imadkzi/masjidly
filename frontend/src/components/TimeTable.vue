@@ -6,6 +6,7 @@ const props = defineProps({
   prayers: { type: Array, default: () => [] },
   activeName: { type: String, default: "" },
   tomorrowData: { type: Array, default: () => [] },
+  showDayLabels: { type: Boolean, default: true },
 });
 
 const normalizeName = (name) => (name || "").toString().trim().toLowerCase();
@@ -20,6 +21,7 @@ const isActive = (rowName) =>
 <template>
   <div
     class="timetable-container"
+    :class="{ 'timetable-container--day-labels': props.showDayLabels }"
     role="region"
     aria-label="Prayer times timetable"
   >
@@ -46,10 +48,10 @@ const isActive = (rowName) =>
             active: isActive(row.name),
           }"
           role="listitem"
-          :aria-label="`${row.name} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
+          :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
           :aria-current="isActive(row.name) ? 'true' : undefined"
         >
-          <span class="name-column">{{ row.name }}</span>
+          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
 
           <template v-if="row.startTime12 && !row.jamatTime12">
             <time
@@ -99,7 +101,9 @@ const isActive = (rowName) =>
 
 .timetable-container {
   width: 100%;
+  min-width: 0;
   height: 100%;
+  overflow: hidden;
 
   @media (max-width: $breakpoint-mobile) {
     height: auto;
@@ -109,6 +113,7 @@ const isActive = (rowName) =>
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: 0;
     flex-grow: 1;
     height: 100%;
 
@@ -149,6 +154,7 @@ const isActive = (rowName) =>
       padding: 0;
       margin: 0;
       flex-grow: 1;
+      min-width: 0;
       gap: 12px;
       justify-content: space-between;
 
@@ -161,6 +167,7 @@ const isActive = (rowName) =>
       li {
         display: flex;
         align-items: center;
+        min-width: 0;
         padding: 15px 20px;
         font-size: 2.4rem;
         line-height: 1.25;
@@ -208,12 +215,16 @@ const isActive = (rowName) =>
 
         .name-column {
           width: 40%;
+          min-width: 0;
           font-weight: $font-weight-bold;
           color: var(--color-text-primary);
-          overflow: hidden;
-          text-overflow: ellipsis;
+          overflow: visible;
           white-space: nowrap;
           font-size: 2.6rem;
+
+          @media (max-width: 1440px) {
+            font-size: 2.15rem;
+          }
 
           @media (max-width: $breakpoint-tablet) {
             font-size: 2rem;
@@ -226,10 +237,15 @@ const isActive = (rowName) =>
 
         .time-column {
           flex: 1;
+          min-width: 0;
           text-align: center;
           color: var(--color-text-primary);
           font-weight: $font-weight-extra-bold;
           font-size: 2.6rem;
+
+          @media (max-width: 1440px) {
+            font-size: 2.15rem;
+          }
 
           @media (max-width: $breakpoint-tablet) {
             font-size: 2rem;
@@ -244,6 +260,22 @@ const isActive = (rowName) =>
           }
         }
       }
+    }
+  }
+
+  &.timetable-container--day-labels .timetable .timetable__list li .name-column {
+    font-size: 2rem;
+
+    @media (max-width: 1440px) {
+      font-size: 1.75rem;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 1.7rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: 1.3rem;
     }
   }
 

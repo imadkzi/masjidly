@@ -16,11 +16,18 @@ export function usePrayerSchedule() {
   const nextPrayerName = ref("");
   const nextPrayerCountdown = ref("");
   const currentPrayerName = ref("");
+  const prayerScheduleLabel = ref("Prayer Today");
+  const prayerDayLabels = ref([]);
 
   let updateInterval = null;
   let midnightTimeout = null;
 
-  const prayers = computed(() => rawPrayers.value.map(normalizePrayerRow));
+  const prayers = computed(() =>
+    rawPrayers.value.map((p, i) => ({
+      ...normalizePrayerRow(p),
+      dayLabel: prayerDayLabels.value[i] ?? "Today",
+    })),
+  );
 
   async function fetchWeekData() {
     await store.fetchWeekData();
@@ -103,8 +110,10 @@ export function usePrayerSchedule() {
     const originalPrayers = [...dailyPrayers];
     store.setTodayData([...originalPrayers, jummahRow], []);
 
+    const dayLabels = [];
     const updatedPrayers = dailyPrayers.map((prayer, index) => {
       if (prayer.Name === "Sehri End") {
+        dayLabels.push("Today");
         return prayer;
       }
 
@@ -112,15 +121,17 @@ export function usePrayerSchedule() {
         prayer["Jamat Time (24hr)"] || prayer["Start Time (24hr)"];
       const prayerSec = time24ToSeconds(timeStr);
       if (prayerSec == null) {
+        dayLabels.push("Today");
         return prayer;
       }
 
-      if (prayerSec + SEEN_PRAYER_GRACE_SECONDS < currentSec) {
-        if (store.tomorrowData[index]) {
-          return store.tomorrowData[index];
-        }
+      const useTomorrow =
+        prayerSec + SEEN_PRAYER_GRACE_SECONDS < currentSec &&
+        store.tomorrowData[index];
+      dayLabels.push(useTomorrow ? "Tomorrow" : "Today");
+      if (useTomorrow) {
+        return store.tomorrowData[index];
       }
-
       return prayer;
     });
 
@@ -132,6 +143,23 @@ export function usePrayerSchedule() {
     rawPrayers.value = updatedPrayers
       .filter((prayer) => prayer.Name !== "Sehri End")
       .concat(jummahRow);
+
+    prayerDayLabels.value = dayLabels
+      .filter((_, i) => dailyPrayers[i]?.Name !== "Sehri End")
+      .concat("Today");
+
+    const lastPrayerSec = dailyPrayers.reduce((latest, prayer) => {
+      if (prayer.Name === "Sehri End") return latest;
+      const timeStr =
+        prayer["Jamat Time (24hr)"] || prayer["Start Time (24hr)"] || "";
+      const sec = time24ToSeconds(timeStr);
+      return sec != null && sec > latest ? sec : latest;
+    }, 0);
+    prayerScheduleLabel.value =
+      lastPrayerSec > 0 &&
+      currentSec >= lastPrayerSec + SEEN_PRAYER_GRACE_SECONDS
+        ? "Prayer Tomorrow"
+        : "Prayer Today";
 
     findNextAndCurrentPrayer();
   }
@@ -171,6 +199,7 @@ export function usePrayerSchedule() {
     nextPrayerName,
     nextPrayerCountdown,
     currentPrayerName,
+    prayerScheduleLabel,
     tomorrowData: computed(() => store.tomorrowData),
     loading: computed(() => store.loading),
     error: computed(() => store.error),

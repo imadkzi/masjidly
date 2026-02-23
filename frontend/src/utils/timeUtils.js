@@ -2,6 +2,7 @@ export function time24ToSeconds(time24) {
   if (!time24 || typeof time24 !== "string") return null;
   const [hh, mm] = time24.split(":").map(Number);
   if (Number.isNaN(hh) || Number.isNaN(mm)) return null;
+  if (hh < 0 || hh > 23 || mm < 0 || mm > 59) return null;
   return hh * 3600 + mm * 60;
 }
 
