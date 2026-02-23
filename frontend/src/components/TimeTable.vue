@@ -172,11 +172,11 @@ const isActive = (rowName) =>
         font-size: 2.4rem;
         line-height: 1.25;
         font-variant-numeric: tabular-nums;
-        background: var(--color-panel-bg);
+        background: var(--color-madni-row-bg);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border-radius: 12px;
-        border: 1px solid var(--color-panel-border);
+        border: 1px solid var(--color-madni-row-border);
         box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
 
@@ -193,7 +193,7 @@ const isActive = (rowName) =>
         }
 
         &:hover {
-          background: var(--color-panel-bg);
+          background: var(--color-madni-row-bg);
           opacity: 0.9;
           transform: translateY(-2px);
           box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.12);
@@ -207,10 +207,10 @@ const isActive = (rowName) =>
 
         &.active {
           background: var(--color-active-bg);
-          border: 1px solid var(--color-active-border);
+          border: 2px solid var(--color-active-border);
           box-shadow:
-            0 0 20px 0 var(--color-active-glow),
-            0 1px 4px 0 rgba(0, 0, 0, 0.08);
+            0 0 28px 0 var(--color-active-glow),
+            0 2px 8px 0 rgba(0, 0, 0, 0.12);
         }
 
         .name-column {
@@ -220,7 +220,7 @@ const isActive = (rowName) =>
           color: var(--color-text-primary);
           overflow: visible;
           white-space: nowrap;
-          font-size: 2.6rem;
+          font-size: 2.4rem;
 
           @media (max-width: 1440px) {
             font-size: 2.15rem;
@@ -241,7 +241,7 @@ const isActive = (rowName) =>
           text-align: center;
           color: var(--color-text-primary);
           font-weight: $font-weight-extra-bold;
-          font-size: 2.6rem;
+          font-size: 2.4rem;
 
           @media (max-width: 1440px) {
             font-size: 2.15rem;
@@ -263,7 +263,8 @@ const isActive = (rowName) =>
     }
   }
 
-  &.timetable-container--day-labels .timetable .timetable__list li .name-column {
+  &.timetable-container--day-labels .timetable .timetable__list li .name-column,
+  &.timetable-container--day-labels .timetable .timetable__list li .time-column {
     font-size: 2rem;
 
     @media (max-width: 1440px) {
@@ -275,7 +276,7 @@ const isActive = (rowName) =>
     }
 
     @media (max-width: $breakpoint-mobile) {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
   }
 
