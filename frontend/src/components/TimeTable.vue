@@ -220,7 +220,7 @@ const isActive = (rowName) =>
           color: var(--color-text-primary);
           overflow: visible;
           white-space: nowrap;
-          font-size: 2.6rem;
+          font-size: 2.4rem;
 
           @media (max-width: 1440px) {
             font-size: 2.15rem;
@@ -241,7 +241,7 @@ const isActive = (rowName) =>
           text-align: center;
           color: var(--color-text-primary);
           font-weight: $font-weight-extra-bold;
-          font-size: 2.6rem;
+          font-size: 2.4rem;
 
           @media (max-width: 1440px) {
             font-size: 2.15rem;
@@ -263,7 +263,8 @@ const isActive = (rowName) =>
     }
   }
 
-  &.timetable-container--day-labels .timetable .timetable__list li .name-column {
+  &.timetable-container--day-labels .timetable .timetable__list li .name-column,
+  &.timetable-container--day-labels .timetable .timetable__list li .time-column {
     font-size: 2rem;
 
     @media (max-width: 1440px) {
@@ -275,7 +276,7 @@ const isActive = (rowName) =>
     }
 
     @media (max-width: $breakpoint-mobile) {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
   }
 
