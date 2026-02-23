@@ -36,8 +36,8 @@ const hijri = computed(() => {
   <header role="banner">
     <div class="header-row">
       <div class="header-section logo-container">
-        <img src="../assets/logo-full.svg" alt="Masjidly" class="logo" />
-        <span aria-hidden="true"></span>
+        <img src="../assets/logo-full-madni.svg" alt="Madni Jamia Masjid" class="logo" />
+        <span aria-hidden="false">Madni Jamia Masjid</span>
       </div>
       <div class="header-section date-container" v-if="date && hijri">
         <time :datetime="now.toISOString()" :aria-label="`Current date: ${date} and Hijri date: ${hijri}`">

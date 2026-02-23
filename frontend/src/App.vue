@@ -238,6 +238,10 @@ $layout-shell-main-gap: 10px;
 
   &__panel--timetable {
     padding: $layout-panel-padding-timetable-y $layout-panel-padding-timetable-x;
+    background: var(--color-madni-panel-bg);
+    border: 1px solid var(--color-madni-panel-border);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 
     @media (max-width: $breakpoint-mobile) {
       overflow: visible;
@@ -293,9 +297,9 @@ body {
     --color-next-prayer-border: rgba(34, 197, 94, 0.3);
     --color-next-prayer-text: #86efac;
     --color-next-prayer-text-dark: #4ade80;
-    --color-active-bg: rgba(34, 197, 94, 0.2);
-    --color-active-border: rgba(34, 197, 94, 0.4);
-    --color-active-glow: rgba(34, 197, 94, 0.4);
+    --color-active-bg: rgba(34, 197, 94, 0.35);
+    --color-active-border: rgba(34, 197, 94, 0.6);
+    --color-active-glow: rgba(34, 197, 94, 0.5);
     --color-jummah-bg: rgba(255, 107, 0, 0.2);
     --color-jummah-border: rgba(255, 107, 0, 0.7);
     --color-jummah-text: #ffa64d;

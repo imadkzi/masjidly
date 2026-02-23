@@ -17,9 +17,9 @@ $breakpoint-large: 1200px;
   --color-next-prayer-border: rgba(34, 197, 94, 0.5);
   --color-next-prayer-text: #032210;
   --color-next-prayer-text-dark: #021a0d;
-  --color-active-bg: rgba(134, 239, 172, 0.5);
-  --color-active-border: rgba(34, 197, 94, 0.55);
-  --color-active-glow: rgba(34, 197, 94, 0.4);
+  --color-active-bg: rgba(134, 239, 172, 0.75);
+  --color-active-border: rgba(22, 163, 74, 0.9);
+  --color-active-glow: rgba(34, 197, 94, 0.6);
   --color-jummah-bg: rgba(251, 146, 60, 0.5);
   --color-jummah-border: rgba(234, 88, 12, 0.75);
   --color-jummah-text: #ea580c;
@@ -30,6 +30,11 @@ $breakpoint-large: 1200px;
   --color-ramadan-label-text: rgba(15, 118, 110, 0.8);
   --color-date-text: rgba(15, 23, 42, 0.85);
   --color-time-text: #0f172a;
+  /* Madni timetable: white panel, green glass rows */
+  --color-madni-panel-bg: #ffffff;
+  --color-madni-panel-border: rgba(45, 146, 90, 0.35);
+  --color-madni-row-bg: rgba(98, 183, 124, 0.18);
+  --color-madni-row-border: rgba(45, 146, 90, 0.3);
 }
 
 [data-theme="dark"] {
@@ -46,9 +51,9 @@ $breakpoint-large: 1200px;
   --color-next-prayer-border: rgba(34, 197, 94, 0.3);
   --color-next-prayer-text: #86efac;
   --color-next-prayer-text-dark: #4ade80;
-  --color-active-bg: rgba(34, 197, 94, 0.2);
-  --color-active-border: rgba(34, 197, 94, 0.4);
-  --color-active-glow: rgba(34, 197, 94, 0.4);
+  --color-active-bg: rgba(34, 197, 94, 0.35);
+  --color-active-border: rgba(34, 197, 94, 0.6);
+  --color-active-glow: rgba(34, 197, 94, 0.5);
   --color-jummah-bg: rgba(255, 107, 0, 0.2);
   --color-jummah-border: rgba(255, 107, 0, 0.7);
   --color-jummah-text: #ffa64d;
@@ -59,6 +64,11 @@ $breakpoint-large: 1200px;
   --color-ramadan-label-text: rgba(255, 255, 255, 0.9);
   --color-date-text: rgba(255, 255, 255, 0.9);
   --color-time-text: rgba(255, 255, 255, 0.95);
+  /* Madni timetable: dark panel, green glass rows */
+  --color-madni-panel-bg: #1e293b;
+  --color-madni-panel-border: rgba(98, 183, 124, 0.35);
+  --color-madni-row-bg: rgba(98, 183, 124, 0.15);
+  --color-madni-row-border: rgba(98, 183, 124, 0.3);
 }
 
 $color-background: var(--color-bg-primary);
