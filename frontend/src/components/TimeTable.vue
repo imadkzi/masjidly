@@ -48,10 +48,10 @@ const isActive = (rowName) =>
             active: isActive(row.name),
           }"
           role="listitem"
-          :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah Khutbah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
+          :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
           :aria-current="isActive(row.name) ? 'true' : undefined"
         >
-          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah Khutbah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
+          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
 
           <template v-if="row.startTime12 && !row.jamatTime12">
             <time
