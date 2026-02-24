@@ -1,7 +1,59 @@
-# Vue 3 + Vite
+# Masjidly Frontend (Vue 3 + Vite)
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is the TV‑optimised frontend for **Masjidly**. It renders:
 
-## Recommended IDE Setup
+- The daily **prayer timetable** with current/next prayer highlighting and optional Today/Tomorrow labels.
+- **Next prayer** card and Ramadan banner (Sehri/Iftar times during Ramadan).
+- A rotating **announcements** section sourced from the Strapi backend.
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+The UI is designed for large displays (e.g. a smart TV browser).
+
+---
+
+## Local development
+
+From the `frontend` directory:
+
+```bash
+npm install
+
+# Run the dev server
+npm run dev
+
+# Build for production
+npm run build
+
+# Run unit tests (Vitest)
+npm run test
+```
+
+By default, Vite serves the app at `http://localhost:5173`.
+
+---
+
+## Environment variables
+
+See **`frontend/.env.example`** for the full list. Key ones:
+
+```bash
+VITE_STRAPI_URL=http://localhost:1337
+VITE_STRAPI_API_TOKEN=...
+
+# Optional: show Today/Tomorrow labels in the timetable (per deployment)
+VITE_SHOW_PRAYER_DAY_LABELS=false
+```
+
+- `VITE_STRAPI_URL` – Base URL of the Strapi backend (without `/api`).
+- `VITE_STRAPI_API_TOKEN` – Strapi API token used by the frontend to fetch data.
+- `VITE_SHOW_PRAYER_DAY_LABELS` – When `"true"`, timetable rows show “Fajr Today”, “Zuhr Tomorrow”, etc.
+
+---
+
+## Notes
+
+- The frontend assumes the Strapi backend exposes:
+  - `/api/salaah-times` (daily timetable)  
+  - `/api/announcements` (TV announcements)
+- Prayer‑based theming (light/dark around Fajr/Maghrib) and Ramadan banner logic live in composables:
+  - `src/composables/usePrayerTheme.js`
+  - `src/composables/useRamadanTimes.js`
