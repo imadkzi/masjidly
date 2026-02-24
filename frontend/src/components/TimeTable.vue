@@ -48,10 +48,10 @@ const isActive = (rowName) =>
             active: isActive(row.name),
           }"
           role="listitem"
-          :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
+          :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah Khutbah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
           :aria-current="isActive(row.name) ? 'true' : undefined"
         >
-          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
+          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah Khutbah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
 
           <template v-if="row.startTime12 && !row.jamatTime12">
             <time
@@ -263,12 +263,27 @@ const isActive = (rowName) =>
     }
   }
 
-  &.timetable-container--day-labels .timetable .timetable__list li .name-column,
-  &.timetable-container--day-labels .timetable .timetable__list li .time-column {
-    font-size: 2rem;
+  &.timetable-container--day-labels .timetable .timetable__list li .name-column {
+    font-size: 1.8rem;
 
     @media (max-width: 1440px) {
-      font-size: 1.75rem;
+      font-size: 1.65rem;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 1.6rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: 1.1rem;
+    }
+  }
+
+  &.timetable-container--day-labels .timetable .timetable__list li .time-column {
+    font-size: 2.1rem;
+    
+    @media (max-width: 1440px) {
+      font-size: 1.95rem;
     }
 
     @media (max-width: $breakpoint-tablet) {
@@ -276,7 +291,7 @@ const isActive = (rowName) =>
     }
 
     @media (max-width: $breakpoint-mobile) {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
     }
   }
 
