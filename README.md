@@ -54,8 +54,8 @@
 
 ### Prerequisites
 
-- **Node.js** (version 16+ recommended)
-- **npm** or **Yarn**
+- **Node.js** (version 20.x)
+- **npm** (>= 10) or **Yarn**
 - **PostgreSQL** (if running locally) or a remote DB connection
 - **Git** (optional, but typical for cloning repos)
 
@@ -103,10 +103,12 @@ CLOUDINARY_SECRET=your_cloudinary_secret_here
 For the **Vue.js** frontend, you might have `.env` variables like:
 
 ```bash
-VITE_APP_STRAPI_URL=https://your-strapi-railway-url/api
+VITE_STRAPI_URL=https://your-strapi-railway-url
+VITE_STRAPI_API_TOKEN=your_strapi_api_token
+VITE_SHOW_PRAYER_DAY_LABELS=false
 ```
 
-(Adjust variable names to match your own setup.)
+(See `frontend/.env.example` for the current set used by this repo.)
 
 ### Running Locally
 
