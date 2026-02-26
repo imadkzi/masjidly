@@ -8,6 +8,9 @@ import {
   processTomorrowsPrayer,
 } from "../utils/salaahUtils";
 
+const ENABLE_SERVER_LOGS =
+  import.meta.env.VITE_ENABLE_SERVER_LOGS === "true";
+
 export const usePrayerTimesStore = defineStore("prayerTimes", () => {
   const weekData = ref([]);
   const originalTodayData = ref([]);
@@ -21,7 +24,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
     error.value = null;
 
     try {
-      if (import.meta.env.DEV) {
+      if (ENABLE_SERVER_LOGS) {
         console.log("[prayerTimes] fetchWeekData: starting request");
       }
       const { startISO, endISO } = getWeekRange();
@@ -35,7 +38,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
       }/api/salaah-times?${queryParams}`;
       const data = await fetchData(url, import.meta.env.VITE_STRAPI_API_TOKEN);
       weekData.value = data.data || [];
-      if (import.meta.env.DEV) {
+      if (ENABLE_SERVER_LOGS) {
         console.log(
           "[prayerTimes] fetchWeekData: success, records:",
           weekData.value.length,
@@ -56,7 +59,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
     error.value = null;
 
     try {
-      if (import.meta.env.DEV) {
+      if (ENABLE_SERVER_LOGS) {
         console.log("[prayerTimes] fetchTomorrowData: starting request");
       }
       const tomorrowISO = getTomorrowISO();
@@ -65,7 +68,7 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
       }/api/salaah-times?filters[date][$eq]=${tomorrowISO}&populate=*`;
       const data = await fetchData(url, import.meta.env.VITE_STRAPI_API_TOKEN);
       tomorrowData.value = processTomorrowsPrayer(data.data?.[0]);
-      if (import.meta.env.DEV) {
+      if (ENABLE_SERVER_LOGS) {
         console.log(
           "[prayerTimes] fetchTomorrowData: success, hasRecord:",
           !!data.data?.[0],

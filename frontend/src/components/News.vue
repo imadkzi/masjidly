@@ -14,6 +14,9 @@ import { handleError } from "../utils/errorHandler";
 import { useTaraweehDua } from "../composables/useTaraweehDua";
 import TaraweehDua from "./TaraweehDua.vue";
 
+const ENABLE_SERVER_LOGS =
+  import.meta.env.VITE_ENABLE_SERVER_LOGS === "true";
+
 const { showTaraweehDua } = useTaraweehDua();
 
 const newsItems = ref([]);
@@ -34,7 +37,7 @@ async function fetchSlideshow() {
   error.value = null;
 
   try {
-    if (import.meta.env.DEV) {
+    if (ENABLE_SERVER_LOGS) {
       console.log("[News] fetchSlideshow: starting request");
     }
     const data = await fetchData("/api/announcements?populate=image");
@@ -46,7 +49,7 @@ async function fetchSlideshow() {
         title: item.title || "",
         background: item.backgroundColor || "",
       }));
-    if (import.meta.env.DEV) {
+    if (ENABLE_SERVER_LOGS) {
       console.log(
         "[News] fetchSlideshow: success, slides:",
         newsItems.value.length,
