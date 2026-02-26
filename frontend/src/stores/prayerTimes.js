@@ -21,6 +21,9 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
     error.value = null;
 
     try {
+      if (import.meta.env.DEV) {
+        console.log("[prayerTimes] fetchWeekData: starting request");
+      }
       const { startISO, endISO } = getWeekRange();
       const queryParams = new URLSearchParams({
         "filters[date][$gte]": startISO,
@@ -32,10 +35,16 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
       }/api/salaah-times?${queryParams}`;
       const data = await fetchData(url, import.meta.env.VITE_STRAPI_API_TOKEN);
       weekData.value = data.data || [];
+      if (import.meta.env.DEV) {
+        console.log(
+          "[prayerTimes] fetchWeekData: success, records:",
+          weekData.value.length,
+        );
+      }
       return weekData.value;
     } catch (err) {
             error.value = handleError(err, "fetchWeekData", "Unable to load weekly prayer times");
-      console.error("Error fetching week data:", err);
+      console.error("[prayerTimes] fetchWeekData error:", err);
       return [];
     } finally {
       loading.value = false;
@@ -47,17 +56,26 @@ export const usePrayerTimesStore = defineStore("prayerTimes", () => {
     error.value = null;
 
     try {
+      if (import.meta.env.DEV) {
+        console.log("[prayerTimes] fetchTomorrowData: starting request");
+      }
       const tomorrowISO = getTomorrowISO();
       const url = `${
         import.meta.env.VITE_STRAPI_URL
       }/api/salaah-times?filters[date][$eq]=${tomorrowISO}&populate=*`;
       const data = await fetchData(url, import.meta.env.VITE_STRAPI_API_TOKEN);
       tomorrowData.value = processTomorrowsPrayer(data.data?.[0]);
+      if (import.meta.env.DEV) {
+        console.log(
+          "[prayerTimes] fetchTomorrowData: success, hasRecord:",
+          !!data.data?.[0],
+        );
+      }
       return tomorrowData.value;
     } catch (err) {
       tomorrowData.value = [];
             error.value = handleError(err, "fetchTomorrowData", "Unable to load tomorrow's prayer times");
-      console.error("Error fetching tomorrow data:", err);
+      console.error("[prayerTimes] fetchTomorrowData error:", err);
       return [];
     } finally {
       loading.value = false;
