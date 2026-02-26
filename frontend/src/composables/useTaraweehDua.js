@@ -6,7 +6,7 @@ import { PRAYER_NAMES } from "../utils/constants";
 import { isRamadanNow } from "../utils/ramadanUtils";
 
 const START_MINS_AFTER_ISHA_JAMAT = 15;
-const DURATION_MINS = 90;
+const DURATION_MINS = 75;
 const SECONDS_PER_DAY = 24 * 3600;
 const NOON_SEC = 12 * 3600;
 
