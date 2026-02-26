@@ -39,13 +39,14 @@ const hijri = computed(() => {
         <img src="../assets/logo-full.svg" alt="Masjidly" class="logo" />
         <span aria-hidden="true"></span>
       </div>
-      <div class="header-section date-container" v-if="date && hijri">
-        <time :datetime="now.toISOString()" :aria-label="`Current date: ${date} and Hijri date: ${hijri}`">
-          {{ date }} | {{ hijri }}
-        </time>
-      </div>
       <div class="header-section time-container" v-if="currentTime">
         <time class="time" :datetime="now.toISOString()" :aria-label="`Current time: ${currentTime}`">{{ currentTime }}</time>
+      </div>
+      <div class="header-section date-container" v-if="date && hijri">
+        <time :datetime="now.toISOString()" :aria-label="`Current date: ${date} and Hijri date: ${hijri}`" class="date-block">
+          <span class="date-gregorian">{{ date }}</span>
+          <span class="date-hijri">{{ hijri }}</span>
+        </time>
       </div>
     </div>
   </header>
@@ -106,26 +107,36 @@ header {
     }
   }
 
-  .date-container {
-    justify-content: center;
-    flex-grow: 2;
-
-    time {
-      font-size: $font-size-xlarge;
-      color: var(--color-date-text);
-      font-weight: $font-weight-bold;
-      line-height: 1.4;
-    }
-  }
-
   .time-container {
-    justify-content: flex-end;
+    justify-content: center;
+    flex-grow: 1;
 
     .time {
       font-size: 3rem;
       font-weight: $font-weight-extra-bold;
       color: var(--color-time-text);
       letter-spacing: 0.02em;
+    }
+  }
+
+  .date-container {
+    justify-content: flex-end;
+    text-align: right;
+
+    .date-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      font-size: $font-size-large;
+      color: var(--color-date-text);
+      font-weight: $font-weight-bold;
+      line-height: 1.4;
+
+      .date-gregorian,
+      .date-hijri {
+        display: block;
+      }
     }
   }
 
@@ -147,7 +158,7 @@ header {
       }
     }
 
-    .date-container time {
+    .date-container .date-block {
       font-size: $font-size-large;
     }
 
@@ -185,14 +196,14 @@ header {
     }
 
     .date-container {
-      order: 1;
+      order: 2;
       justify-content: center;
+      text-align: center;
 
-      time {
+      .date-block {
+        align-items: center;
         font-size: 0.875rem;
         line-height: 1.3;
-        text-align: center;
-        display: block;
       }
     }
 
