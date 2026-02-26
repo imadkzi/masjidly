@@ -34,6 +34,9 @@ async function fetchSlideshow() {
   error.value = null;
 
   try {
+    if (import.meta.env.DEV) {
+      console.log("[News] fetchSlideshow: starting request");
+    }
     const data = await fetchData("/api/announcements?populate=image");
 
     newsItems.value = (data?.data || [])
@@ -43,13 +46,19 @@ async function fetchSlideshow() {
         title: item.title || "",
         background: item.backgroundColor || "",
       }));
+    if (import.meta.env.DEV) {
+      console.log(
+        "[News] fetchSlideshow: success, slides:",
+        newsItems.value.length,
+      );
+    }
   } catch (err) {
     error.value = handleError(
       err,
       "fetchSlideshow",
       "Unable to load announcements",
     );
-    console.error("Error fetching slideshow data:", err);
+    console.error("[News] fetchSlideshow error:", err);
   } finally {
     loading.value = false;
   }
