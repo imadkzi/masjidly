@@ -8,11 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div
-    class="next-prayer"
-    role="region"
-    aria-label="Next prayer"
-  >
+  <div class="next-prayer" role="region" aria-label="Next prayer">
     <div class="next-prayer__top">
       <div class="next-prayer__content">
         <div
@@ -82,21 +78,21 @@ const props = defineProps({
   }
 
   &__name {
-    font-size: 1.8rem;
+    font-size: $font-size-xxlarge;
     font-weight: $font-weight-extra-bold;
     color: var(--color-next-prayer-text);
     white-space: nowrap;
   }
 
   &__separator {
-    font-size: $font-size-medium;
-    color: var(--color-label-text);
+    font-size: $font-size-large;
+    color: var(--color-next-prayer-text-dark);
     font-weight: $font-weight-bold;
     letter-spacing: 0.05em;
   }
 
   &__countdown {
-    font-size: 1.8rem;
+    font-size: $font-size-xxlarge;
     font-weight: $font-weight-extra-bold;
     color: var(--color-next-prayer-text-dark);
     white-space: nowrap;
