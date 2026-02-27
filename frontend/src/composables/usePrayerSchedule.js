@@ -56,6 +56,16 @@ export function usePrayerSchedule() {
       .filter((p) => p.sec != null && (isFriday || p.Name !== "Jummah"))
       .sort((a, b) => (a.sec ?? 0) - (b.sec ?? 0));
 
+    const jummah = isFriday
+      ? prayersWithSec.find((p) => p.Name === "Jummah")
+      : null;
+    const zuhr = isFriday
+      ? prayersWithSec.find((p) => p.Name === "Zuhr")
+      : null;
+    const asr = isFriday
+      ? prayersWithSec.find((p) => p.Name === "Asr")
+      : null;
+
     if (!prayersWithSec.length) {
       nextPrayerName.value = "No upcoming prayers";
       nextPrayerCountdown.value = "";
@@ -90,6 +100,30 @@ export function usePrayerSchedule() {
     }
 
     currentPrayerName.value = currentPrayer?.Name || "";
+
+    // On Fridays, treat Jummah as the active prayer instead of Zuhr.
+    // Make Jummah active starting 1 hour before Zuhr start, until Asr begins
+    // (or until the end of the day if Asr is missing).
+    if (isFriday && jummah && zuhr) {
+      const zuhrSec =
+        zuhr.sec ?? time24ToSeconds(zuhr["Start Time (24hr)"] || "");
+      const asrSec =
+        asr?.sec ?? time24ToSeconds(asr?.["Start Time (24hr)"] || "");
+
+      if (typeof zuhrSec === "number" && !Number.isNaN(zuhrSec)) {
+        const startWindow = Math.max(0, zuhrSec - 3600); // 1 hour before Zuhr
+        const endWindow =
+          typeof asrSec === "number" &&
+          !Number.isNaN(asrSec) &&
+          asrSec > startWindow
+            ? asrSec
+            : 24 * 3600;
+
+        if (currentSec >= startWindow && currentSec < endWindow) {
+          currentPrayerName.value = "Jummah";
+        }
+      }
+    }
   }
 
   function buildTodaysData() {

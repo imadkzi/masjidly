@@ -13,9 +13,9 @@ import { scheduleAtMidnight } from "../utils/scheduleUtils";
 import { handleError } from "../utils/errorHandler";
 import { useTaraweehDua } from "../composables/useTaraweehDua";
 import TaraweehDua from "./TaraweehDua.vue";
+import RamadanBanner from "./RamadanBanner.vue";
 
-const ENABLE_SERVER_LOGS =
-  import.meta.env.VITE_ENABLE_SERVER_LOGS === "true";
+const ENABLE_SERVER_LOGS = import.meta.env.VITE_ENABLE_SERVER_LOGS === "true";
 
 const { showTaraweehDua } = useTaraweehDua();
 
@@ -123,33 +123,38 @@ onUnmounted(() => {
       <div v-else-if="error" class="error" role="alert" aria-live="assertive">
         {{ error }}
       </div>
-      <Swiper
-        v-else-if="newsItems.length"
-        :class="{ 'ramadan-news': isRamadan }"
-        v-bind="swiperConfig"
-        @slideChange="onSlideChange"
-        aria-label="Announcements slideshow"
-      >
-        <SwiperSlide v-for="(item, index) in newsItems" :key="index">
-          <div class="news-item">
-            <figure class="news-image">
-              <img
-                :src="item.image"
-                :alt="item.title || `Announcement ${index + 1}`"
-                :aria-label="item.title || `Announcement ${index + 1}`"
-                loading="lazy"
-              />
-            </figure>
-          </div>
-        </SwiperSlide>
-      </Swiper>
-      <div
-        v-else
-        :class="{ 'ramadan-news': isRamadan }"
-        class="skeleton-news"
-        aria-hidden="true"
-      >
-        <div class="skeleton-image"></div>
+      <div v-else class="news-inner">
+        <div class="news-banner">
+          <RamadanBanner />
+        </div>
+        <Swiper
+          v-if="newsItems.length"
+          :class="{ 'ramadan-news': isRamadan }"
+          v-bind="swiperConfig"
+          @slideChange="onSlideChange"
+          aria-label="Announcements slideshow"
+        >
+          <SwiperSlide v-for="(item, index) in newsItems" :key="index">
+            <div class="news-item">
+              <figure class="news-image">
+                <img
+                  :src="item.image"
+                  :alt="item.title || `Announcement ${index + 1}`"
+                  :aria-label="item.title || `Announcement ${index + 1}`"
+                  loading="lazy"
+                />
+              </figure>
+            </div>
+          </SwiperSlide>
+        </Swiper>
+        <div
+          v-else
+          :class="{ 'ramadan-news': isRamadan }"
+          class="skeleton-news"
+          aria-hidden="true"
+        >
+          <div class="skeleton-image"></div>
+        </div>
       </div>
     </template>
   </div>
@@ -171,6 +176,18 @@ onUnmounted(() => {
   @media (max-width: $breakpoint-mobile) {
     flex: 1;
     min-height: 0;
+  }
+
+  .news-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .news-banner {
+    flex-shrink: 0;
+    padding-bottom: 10px;
   }
 
   .swiper {

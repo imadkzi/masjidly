@@ -1,27 +1,8 @@
 <script setup>
-import { computed } from "vue";
 import { useRamadanTimes } from "../composables/useRamadanTimes";
 
-const {
-  isRamadan,
-  sehriEndTime,
-  iftarTime,
-  sehriLabel,
-  iftarLabel,
-  ramadanDay,
-} = useRamadanTimes();
-
-function ordinal(n) {
-  if (n == null || n < 1) return "";
-  const v = n % 100;
-  if (v >= 11 && v <= 13) return n + "TH";
-  const s = ["TH", "ST", "ND", "RD"];
-  return n + (s[(v - 20) % 10] || s[v] || s[0]);
-}
-
-const ramadanDayOrdinal = computed(() =>
-  ramadanDay.value != null ? ordinal(ramadanDay.value) : "",
-);
+const { isRamadan, sehriEndTime, iftarTime, sehriLabel, iftarLabel } =
+  useRamadanTimes();
 </script>
 
 <template>
@@ -29,15 +10,8 @@ const ramadanDayOrdinal = computed(() =>
     v-if="isRamadan"
     class="ramadan-banner"
     role="region"
-    aria-label="Ramadan day and key times"
+    aria-label="Ramadan key times"
   >
-    <template v-if="ramadanDayOrdinal">
-      <span class="ramadan-banner__day" :aria-label="`${ramadanDayOrdinal} day of Ramadhan`">
-        {{ ramadanDayOrdinal }}
-      </span>
-      <span class="ramadan-banner__title">Ramadhan</span>
-    </template>
-    <span class="ramadan-banner__divider" aria-hidden="true">|</span>
     <span class="ramadan-banner__item">
       <span class="ramadan-banner__label">{{ sehriLabel }}:</span>
       <time
@@ -84,8 +58,6 @@ const ramadanDayOrdinal = computed(() =>
     gap: 8px;
     font-size: 1.2rem;
 
-    .ramadan-banner__title,
-    .ramadan-banner__day,
     .ramadan-banner__label,
     .ramadan-banner__time {
       font-size: 1.2rem;
@@ -96,21 +68,6 @@ const ramadanDayOrdinal = computed(() =>
     }
   }
 
-  &__title {
-    font-size: 1.4rem;
-    font-weight: $font-weight-extra-bold;
-    letter-spacing: 0.08em;
-    color: var(--color-ramadan-label-text);
-    text-transform: uppercase;
-  }
-
-  &__day {
-    font-size: 1.4rem;
-    font-weight: $font-weight-extra-bold;
-    color: var(--color-next-prayer-text);
-    text-transform: uppercase;
-  }
-
   &__item {
     display: inline-flex;
     align-items: baseline;
@@ -119,15 +76,15 @@ const ramadanDayOrdinal = computed(() =>
   }
 
   &__label {
-    font-size: 1.4rem;
+    font-size: 2rem;
     font-weight: $font-weight-bold;
     color: var(--color-ramadan-label-text);
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    }
+  }
 
   &__time {
-    font-size: 1.4rem;
+    font-size: 2rem;
     font-weight: $font-weight-extra-bold;
     color: var(--color-next-prayer-text);
   }
@@ -142,4 +99,3 @@ const ramadanDayOrdinal = computed(() =>
   }
 }
 </style>
-

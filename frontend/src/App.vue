@@ -2,7 +2,6 @@
 import SalaahView from "./views/SalaahView.vue";
 import Date from "./components/Date.vue";
 import News from "./components/News.vue";
-import RamadanBanner from "./components/RamadanBanner.vue";
 import ErrorBoundary from "./components/ErrorBoundary.vue";
 import { usePrayerTheme } from "./composables/usePrayerTheme";
 
@@ -21,29 +20,46 @@ const showDayLabels = import.meta.env.VITE_SHOW_PRAYER_DAY_LABELS === "true";
         :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
       >
         <span class="theme-toggle__icon" aria-hidden="true">
-          <svg v-if="isDark" class="theme-toggle__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3"/>
-            <line x1="12" y1="21" x2="12" y2="23"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-            <line x1="1" y1="12" x2="3" y2="12"/>
-            <line x1="21" y1="12" x2="23" y2="12"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          <svg
+            v-if="isDark"
+            class="theme-toggle__svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" />
+            <line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" />
+            <line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
           </svg>
-          <svg v-else class="theme-toggle__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          <svg
+            v-else
+            class="theme-toggle__svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </span>
-        <span class="theme-toggle__label">{{ isDark ? 'Light' : 'Dark' }}</span>
+        <span class="theme-toggle__label">{{ isDark ? "Light" : "Dark" }}</span>
       </button>
       <header class="tv-shell__header" role="banner">
         <Date />
       </header>
 
       <main class="tv-shell__main" role="main">
-        <RamadanBanner />
         <section class="tv-shell__grid">
           <div
             class="tv-shell__panel tv-shell__panel--timetable"
@@ -153,7 +169,8 @@ $layout-shell-main-gap: 10px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: $layout-shell-padding-top $layout-shell-padding-right $layout-shell-padding-bottom $layout-shell-padding-left;
+  padding: $layout-shell-padding-top $layout-shell-padding-right
+    $layout-shell-padding-bottom $layout-shell-padding-left;
   overflow-x: hidden;
 
   &__header {
@@ -220,7 +237,10 @@ $layout-shell-main-gap: 10px;
     border-radius: 20px;
     border: 1px solid var(--color-panel-border);
     box-shadow: 0 8px 32px 0 var(--color-panel-shadow);
-    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      background 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
 
     @media (min-width: $breakpoint-large) {
       padding: $layout-panel-padding-large-y $layout-panel-padding-large-x;
@@ -273,13 +293,21 @@ $layout-shell-main-gap: 10px;
 }
 
 body {
-  font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", sans-serif;
+  font-family:
+    -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    sans-serif;
   color: var(--color-text-primary);
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 50%, var(--color-bg-tertiary) 100%);
+  overflow: auto;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-primary) 0%,
+    var(--color-bg-secondary) 50%,
+    var(--color-bg-tertiary) 100%
+  );
   min-height: 100vh;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 @media (prefers-color-scheme: dark) {

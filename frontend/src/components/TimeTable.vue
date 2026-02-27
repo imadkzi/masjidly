@@ -51,7 +51,14 @@ const isActive = (rowName) =>
           :aria-label="`${row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name}${props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : ''} prayer: Start ${row.startTime12}${row.jamatTime12 ? `, Jamat ${row.jamatTime12}` : ''}`"
           :aria-current="isActive(row.name) ? 'true' : undefined"
         >
-          <span class="name-column">{{ row.name === PRAYER_NAMES.JUMMAH ? 'Jummah' : row.name }}{{ props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH ? ` ${row.dayLabel || 'Today'}` : '' }}</span>
+          <span class="name-column"
+            >{{ row.name === PRAYER_NAMES.JUMMAH ? "Jummah" : row.name
+            }}{{
+              props.showDayLabels && row.name !== PRAYER_NAMES.JUMMAH
+                ? ` ${row.dayLabel || "Today"}`
+                : ""
+            }}</span
+          >
 
           <template v-if="row.startTime12 && !row.jamatTime12">
             <time
@@ -132,11 +139,11 @@ const isActive = (rowName) =>
       margin-bottom: 6px;
 
       .name-column {
-        width: 40%;
+        width: 50%;
         text-align: left;
       }
       .time-column {
-        flex: 1;
+        flex: 0.8;
         text-align: center;
       }
 
@@ -214,84 +221,92 @@ const isActive = (rowName) =>
         }
 
         .name-column {
-          width: 40%;
+          width: 50%;
           min-width: 0;
           font-weight: $font-weight-bold;
           color: var(--color-text-primary);
           overflow: visible;
           white-space: nowrap;
-          font-size: 2.4rem;
+          font-size: 2.6rem;
 
           @media (max-width: 1440px) {
-            font-size: 2.15rem;
+            font-size: 2.3rem;
           }
 
           @media (max-width: $breakpoint-tablet) {
-            font-size: 2rem;
+            font-size: 2.1rem;
           }
 
           @media (max-width: $breakpoint-mobile) {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
           }
         }
 
         .time-column {
-          flex: 1;
+          flex: 0.8;
           min-width: 0;
           text-align: center;
           color: var(--color-text-primary);
           font-weight: $font-weight-extra-bold;
-          font-size: 2.4rem;
+          font-size: 2.8rem;
 
           @media (max-width: 1440px) {
-            font-size: 2.15rem;
+            font-size: 2.4rem;
           }
 
           @media (max-width: $breakpoint-tablet) {
-            font-size: 2rem;
+            font-size: 2.1rem;
           }
 
           @media (max-width: $breakpoint-mobile) {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
           }
 
           &.full-width {
-            flex: 2;
+            flex: 1.6;
           }
         }
       }
     }
   }
 
-  &.timetable-container--day-labels .timetable .timetable__list li .name-column {
-    font-size: 1.8rem;
+  &.timetable-container--day-labels
+    .timetable
+    .timetable__list
+    li
+    .name-column {
+    font-size: 2.2rem;
 
     @media (max-width: 1440px) {
-      font-size: 1.65rem;
+      font-size: 1.85rem;
     }
 
     @media (max-width: $breakpoint-tablet) {
-      font-size: 1.6rem;
-    }
-
-    @media (max-width: $breakpoint-mobile) {
-      font-size: 1.1rem;
-    }
-  }
-
-  &.timetable-container--day-labels .timetable .timetable__list li .time-column {
-    font-size: 2.1rem;
-    
-    @media (max-width: 1440px) {
-      font-size: 1.95rem;
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 1.7rem;
+      font-size: 1.75rem;
     }
 
     @media (max-width: $breakpoint-mobile) {
       font-size: 1.3rem;
+    }
+  }
+
+  &.timetable-container--day-labels
+    .timetable
+    .timetable__list
+    li
+    .time-column {
+    font-size: 2.6rem;
+
+    @media (max-width: 1440px) {
+      font-size: 2.2rem;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 2rem;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: 1.5rem;
     }
   }
 

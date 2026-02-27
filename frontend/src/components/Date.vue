@@ -12,7 +12,7 @@ const currentTime = computed(() =>
     minute: "2-digit",
     second: "2-digit",
     hour12: true,
-  })
+  }),
 );
 
 // Gregorian date (derived from "now")
@@ -22,7 +22,7 @@ const date = computed(() =>
     day: "numeric",
     month: "long",
     year: "numeric",
-  })
+  }),
 );
 
 // Hijri date (derived from "now")
@@ -40,10 +40,19 @@ const hijri = computed(() => {
         <span aria-hidden="false">Madni Jamia Masjid</span>
       </div>
       <div class="header-section time-container" v-if="currentTime">
-        <time class="time" :datetime="now.toISOString()" :aria-label="`Current time: ${currentTime}`">{{ currentTime }}</time>
+        <time
+          class="time"
+          :datetime="now.toISOString()"
+          :aria-label="`Current time: ${currentTime}`"
+          >{{ currentTime }}</time
+        >
       </div>
       <div class="header-section date-container" v-if="date && hijri">
-        <time :datetime="now.toISOString()" :aria-label="`Current date: ${date} and Hijri date: ${hijri}`" class="date-block">
+        <time
+          :datetime="now.toISOString()"
+          :aria-label="`Current date: ${date} and Hijri date: ${hijri}`"
+          class="date-block"
+        >
           <span class="date-gregorian">{{ date }}</span>
           <span class="date-hijri">{{ hijri }}</span>
         </time>
@@ -64,7 +73,10 @@ header {
   border: 1px solid var(--color-panel-border);
   box-shadow: 0 8px 32px 0 var(--color-panel-shadow);
   min-height: 90px;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 
   @media (max-width: $breakpoint-mobile) {
     border-radius: 12px;
@@ -112,7 +124,7 @@ header {
     flex-grow: 1;
 
     .time {
-      font-size: 3rem;
+      font-size: 3.7rem;
       font-weight: $font-weight-extra-bold;
       color: var(--color-time-text);
       letter-spacing: 0.02em;
