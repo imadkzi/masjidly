@@ -56,10 +56,12 @@ export function useTaraweehDua() {
       return;
     }
     const wasShowing = showTaraweehDua.value;
-    const data = store.updatedTodayData?.length
-      ? store.updatedTodayData
-      : store.originalTodayData;
-    const inWindow = inTaraweehDuaWindow(now.value, data);
+    // Use originalTodayData so we always use today's Isha jamat for the window.
+    // updatedTodayData can swap in tomorrow's Isha after today's has passed.
+    const data = store.originalTodayData;
+    const inWindow = data?.length
+      ? inTaraweehDuaWindow(now.value, data)
+      : false;
     showTaraweehDua.value = inWindow;
     if (wasShowing && !inWindow) {
       windowEndedForDate.value = todayLocal;
