@@ -32,7 +32,7 @@ import taraweehDuaImage from "../assets/taraweeh-dua.png";
   &__image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     display: block;
   }
 }
