@@ -27,7 +27,10 @@ module.exports = ({ env }) => ({
       },
     },
   },
-  // "strapi-plugin-tablify": {
-  //   enabled: true,
-  // },
+  "strapi-csv-import-export": {
+    config: {
+      authorizedExports: ["api::salaah-time.salaah-time"],
+      authorizedImports: ["api::salaah-time.salaah-time"],
+    },
+  },
 });
