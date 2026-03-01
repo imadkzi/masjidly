@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
-import { fetchData } from "../utils/apiUtils";
+import { fetchData, resolveStrapiMediaUrl } from "../utils/apiUtils";
 import { isRamadanNow } from "../utils/ramadanUtils";
 import {
   SLIDESHOW_DELAY_MS,
@@ -45,7 +45,7 @@ async function fetchSlideshow() {
     newsItems.value = (data?.data || [])
       .filter((item) => item.image?.url)
       .map((item) => ({
-        image: item.image.url,
+        image: resolveStrapiMediaUrl(item.image.url),
         title: item.title || "",
         background: item.backgroundColor || "",
       }));

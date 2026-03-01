@@ -1,6 +1,6 @@
 # Masjidly – Docker setup (offline / local PC)
 
-This setup runs the full Masjidly stack (Strapi backend, Vue frontend, Postgres) with Docker. **Backend secrets** are auto-generated, the **frontend API URL** is set from `PUBLIC_URL`, and **storage defaults to local**. The **Strapi API token** is not automatic—you must create it in Strapi Admin and add it to `.env`.
+This setup runs the full Masjidly stack (Strapi backend, Vue frontend, Postgres) with Docker. **Backend secrets** are auto-generated, the **frontend API URL** is set from `PUBLIC_URL`, and **storage defaults to local**. The **Strapi API token** is not automatic—create it in Strapi Admin and put it in **`.strapi_token`** (see §5).
 
 ---
 
@@ -41,7 +41,10 @@ From the **project root**:
 
 ```bash
 copy .env.example .env
+copy .strapi_token.example .strapi_token
 ```
+
+(Mac/Linux: `cp .env.example .env` and `cp .strapi_token.example .strapi_token`)
 
 Edit **`.env`** (in the project root):
 
@@ -49,9 +52,9 @@ Edit **`.env`** (in the project root):
 - Set **`CRON_ENABLED`** to `true` or `false` (enables Strapi cron tasks; default `false`).
 - Set **`VITE_ENABLE_SERVER_LOGS`** and **`VITE_SHOW_PRAYER_DAY_LABELS`** to `true` or `false` if you want to override defaults (defaults `false`; used when the frontend image is built).
 - Optionally set **`PUBLIC_URL`** if the backend will be at a different URL (default `http://localhost:1337`).
-- **API token:** This cannot be auto-generated. After the first run, create an API token in **Strapi Admin** (Settings → API Tokens), copy it, then set **`VITE_STRAPI_API_TOKEN`** in `.env` and rebuild the frontend (see §5).
+- **API token:** This cannot be auto-generated. After the first run, create an API token in **Strapi Admin** (Settings → API Tokens) and put it in **`.strapi_token`** (see §5).
 
-You do **not** need to create `backend/.env` or `frontend/.env` for Docker. Backend secrets are generated automatically. The frontend API URL comes from `PUBLIC_URL`; the API token must be created in Admin and added to root `.env`.
+You do **not** need to create `backend/.env` or `frontend/.env` for Docker. Backend secrets are generated automatically. The frontend API URL comes from `PUBLIC_URL`. The API token goes in **`.strapi_token`** (copy from `.strapi_token.example` before first build so the file exists).
 
 **How frontend env works:** Vite (the frontend build tool) only loads a file named **`.env`** in the frontend folder. There is no separate “.env.frontend” that gets read. For **Docker**, we build the frontend image with values from the root `.env` and the Dockerfile writes a **`.env`** inside the container. For **local dev**, copy `frontend/.env.frontend.example` to **`frontend/.env`** so Vite picks it up. So in both cases the file that is actually used is **`.env`**; `.env.frontend.example` is just the template (the name is to distinguish it from the backend’s `.env`).
 
@@ -77,7 +80,7 @@ docker compose up -d --build
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Backend secrets**  | If `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, or `JWT_SECRET` are not set, the backend entrypoint generates them with `openssl rand -base64 32` so the app can start without `backend/.env`. |
 | **Frontend API URL** | Set at build time from **`PUBLIC_URL`** in the root `.env` (default `http://localhost:1337`). The frontend is built with this so the browser talks to your backend.                                                        |
-| **Strapi API token** | **Not automatic.** Must be created in Strapi Admin (Settings → API Tokens), then added to root `.env` as `VITE_STRAPI_API_TOKEN` and the frontend rebuilt.                                                                 |
+| **Strapi API token** | **Not automatic.** Create in Strapi Admin, put in `.strapi_token`, then rebuild frontend.                                                                 |
 | **Storage (Docker)** | Backend runs with **`STORAGE_PROVIDER=local`** by default. Uploads go to the `backend_uploads` volume (`./public/uploads` in the container).                                                                               |
 
 ---
