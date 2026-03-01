@@ -1,0 +1,3 @@
+# Docker frontend build secret (token); create from .env before building
+.strapi_token
+.env
