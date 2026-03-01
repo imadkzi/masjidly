@@ -1,0 +1,80 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: masjidly-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-strapi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strapi}
+      POSTGRES_DB: ${POSTGRES_DB:-strapi}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - masjidly
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-strapi} -d ${POSTGRES_DB:-strapi}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: masjidly-backend
+    restart: unless-stopped
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: ${POSTGRES_DB:-strapi}
+      DATABASE_USERNAME: ${POSTGRES_USER:-strapi}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-strapi}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:1337}
+      STORAGE_PROVIDER: ${STORAGE_PROVIDER:-local}
+      CRON_ENABLED: ${CRON_ENABLED:-false}
+    volumes:
+      - backend_uploads:/app/public/uploads
+    ports:
+      - "1337:1337"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - masjidly
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_STRAPI_URL: ${PUBLIC_URL:-http://localhost:1337}
+        VITE_ENABLE_SERVER_LOGS: ${VITE_ENABLE_SERVER_LOGS:-false}
+        VITE_SHOW_PRAYER_DAY_LABELS: ${VITE_SHOW_PRAYER_DAY_LABELS:-false}
+      secrets:
+        - strapi_token
+    container_name: masjidly-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - masjidly
+
+volumes:
+  postgres_data:
+  backend_uploads:
+
+secrets:
+  # Token for frontend API calls; create with: grep VITE_STRAPI_API_TOKEN .env | cut -d= -f2- > .strapi_token
+  strapi_token:
+    file: .strapi_token
+
+networks:
+  masjidly:
+    driver: bridge

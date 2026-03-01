@@ -1,0 +1,10 @@
+node_modules
+.git
+.env
+.env.*
+!.env.frontend
+!.env.frontend.example
+*.log
+dist
+coverage
+.vitest
