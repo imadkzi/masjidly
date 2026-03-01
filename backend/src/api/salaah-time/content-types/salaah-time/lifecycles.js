@@ -42,7 +42,19 @@ function normalizeTimeValue(value) {
   return `${hh}:${mm}:${ss}.${ms}`;
 }
 
+/** Fix CRLF-corrupted CSV keys (e.g. "isha_jamat\r" -> "isha_jamat") before processing */
+function normalizeKeys(data = {}) {
+  for (const key of Object.keys(data)) {
+    const cleanKey = key.replace(/\r+$/, '').trim();
+    if (cleanKey !== key) {
+      data[cleanKey] = data[key];
+      delete data[key];
+    }
+  }
+}
+
 function normalizeTimes(data = {}) {
+  normalizeKeys(data);
   for (const field of TIME_FIELDS) {
     if (Object.prototype.hasOwnProperty.call(data, field)) {
       data[field] = normalizeTimeValue(data[field]);
