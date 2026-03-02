@@ -22,6 +22,7 @@
    - [Frontend on Netlify](#frontend-on-netlify)
    - [Cloudinary Setup](#cloudinary-setup)
    - [Backend (Strapi) on Railway](#backend-strapi-on-railway)
+   - [Docker (Local Stack)](#docker-local-stack)
 5. [Project Structure](#project-structure)
 6. [License](#license)
 7. [Acknowledgments](#acknowledgments)
@@ -209,6 +210,14 @@ To set up Cloudinary with Strapi, ensure you have the required environment varia
 4. **Access Your Strapi Admin**:
    - After deployment, note the Railway domain, e.g. `https://your-strapi-app.up.railway.app/admin`
    - Create your admin account.
+
+### Docker (Local Stack)
+
+For an offline/local setup that runs Postgres, Strapi, and the Vue frontend entirely in Docker (useful for TVs or kiosks that are not always online), see `DOCKER.md`. It covers:
+
+- The Docker Compose stack (`postgres`, `masjidly-backend`, `masjidly-frontend`).
+- Automatic generation and persistence of Strapi secrets in Docker volumes.
+- How to rebuild the frontend with a new Strapi API token without recreating the backend.
 
 ---
 
