@@ -27,8 +27,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh \
-  && mkdir -p public/uploads database/migrations .tmp \
-  && chown -R strapi:nodejs public/uploads database .tmp
+  && mkdir -p public/uploads database/migrations .tmp runtime-secrets \
+  && chown -R strapi:nodejs public/uploads database .tmp runtime-secrets
 USER strapi
 EXPOSE 1337
 ENTRYPOINT ["./docker-entrypoint.sh"]

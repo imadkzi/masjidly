@@ -39,6 +39,7 @@ services:
       CRON_ENABLED: ${CRON_ENABLED:-false}
     volumes:
       - backend_uploads:/app/public/uploads
+      - backend_secrets:/app/runtime-secrets
     ports:
       - "1337:1337"
     depends_on:
@@ -69,6 +70,7 @@ services:
 volumes:
   postgres_data:
   backend_uploads:
+  backend_secrets:
 
 secrets:
   # Token for frontend API calls; create with: grep VITE_STRAPI_API_TOKEN .env | cut -d= -f2- > .strapi_token

@@ -105,8 +105,8 @@ The Strapi API token is **only** created in the admin panel; it cannot be genera
    `echo "paste_token_here" > .strapi_token`  
    Or from root `.env`:  
    `grep VITE_STRAPI_API_TOKEN .env | cut -d= -f2- > .strapi_token`
-4. Rebuild the frontend:  
-   `docker compose up -d --build frontend`
+4. Rebuild the frontend (image only) and restart it:  
+   `docker compose build --no-cache frontend && docker compose up -d frontend`
 
 ---
 
