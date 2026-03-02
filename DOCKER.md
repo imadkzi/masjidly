@@ -48,7 +48,7 @@ copy .strapi_token.example .strapi_token
 
 Edit **`.env`** (in the project root):
 
-- Set **`POSTGRES_PASSWORD`** (e.g. run `openssl rand -hex 16` and paste).
+- Set **`POSTGRES_PASSWORD`** (e.g. use a random string, or see **Generating secrets** below).
 - Set **`CRON_ENABLED`** to `true` or `false` (enables Strapi cron tasks; default `false`).
 - Set **`VITE_ENABLE_SERVER_LOGS`** and **`VITE_SHOW_PRAYER_DAY_LABELS`** to `true` or `false` if you want to override defaults (defaults `false`; used when the frontend image is built).
 - Optionally set **`PUBLIC_URL`** if the backend will be at a different URL (default `http://localhost:1337`).
@@ -57,6 +57,16 @@ Edit **`.env`** (in the project root):
 You do **not** need to create `backend/.env` or `frontend/.env` for Docker. Backend secrets are generated automatically. The frontend API URL comes from `PUBLIC_URL`. The API token goes in **`.strapi_token`** (copy from `.strapi_token.example` before first build so the file exists).
 
 **How frontend env works:** Vite (the frontend build tool) only loads a file named **`.env`** in the frontend folder. There is no separate “.env.frontend” that gets read. For **Docker**, we build the frontend image with values from the root `.env` and the Dockerfile writes a **`.env`** inside the container. For **local dev**, copy `frontend/.env.frontend.example` to **`frontend/.env`** so Vite picks it up. So in both cases the file that is actually used is **`.env`**; `.env.frontend.example` is just the template (the name is to distinguish it from the backend’s `.env`).
+
+**Generating secrets**  
+To generate random values for `POSTGRES_PASSWORD` or other secrets:
+
+- **PowerShell (Windows):**  
+  Hex-like string: `-join ((48..57) + (97..102) | Get-Random -Count 32 | ForEach-Object { [char]$_ })`  
+  Base64: `[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])`
+- **Node (any OS, e.g. Mac/Linux or inside Docker):**  
+  `docker run --rm node:alpine node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`  
+  Run multiple times for `APP_KEYS` (comma-separate the outputs), or once per secret.
 
 ---
 
@@ -78,7 +88,7 @@ docker compose up -d --build
 
 | Item                 | Behaviour                                                                                                                                                                                                                  |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend secrets**  | If `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, or `JWT_SECRET` are not set, the backend entrypoint generates them with `openssl rand -base64 32` so the app can start without `backend/.env`. |
+| **Backend secrets**  | If `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, or `JWT_SECRET` are not set, the backend entrypoint generates them (using Node) so the app can start without `backend/.env`. |
 | **Frontend API URL** | Set at build time from **`PUBLIC_URL`** in the root `.env` (default `http://localhost:1337`). The frontend is built with this so the browser talks to your backend.                                                        |
 | **Strapi API token** | **Not automatic.** Create in Strapi Admin, put in `.strapi_token`, then rebuild frontend.                                                                 |
 | **Storage (Docker)** | Backend runs with **`STORAGE_PROVIDER=local`** by default. Uploads go to the `backend_uploads` volume (`./public/uploads` in the container).                                                                               |
@@ -137,11 +147,10 @@ With `STORAGE_PROVIDER=local` (default in Docker):
 
 ## 9. Manual secret generation (non-Docker)
 
-If you run the backend **without** Docker, copy `backend/.env.example` to `backend/.env` and set secrets yourself. Example:
+If you run the backend **without** Docker, copy `backend/.env.example` to `backend/.env` and set secrets yourself. Generate random base64 values with Node (run multiple times for `APP_KEYS`, comma-separated):
 
 ```bash
-openssl rand -base64 32   # use 4x for APP_KEYS (comma-separated)
-openssl rand -base64 32   # API_TOKEN_SALT, ADMIN_JWT_SECRET, etc.
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ```
 
 ---
