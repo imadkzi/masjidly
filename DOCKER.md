@@ -88,7 +88,7 @@ docker compose up -d --build
 
 | Item                 | Behaviour                                                                                                                                                                                                                  |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Backend secrets**  | If `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, or `JWT_SECRET` are not set, the backend entrypoint generates them (using Node) so the app can start without `backend/.env`. |
+| **Backend secrets**  | If `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, or `JWT_SECRET` are not set, the backend entrypoint generates them (using Node) and persists them to a `backend_secrets` volume so the app can start without `backend/.env` and keep working across restarts. |
 | **Frontend API URL** | Set at build time from **`PUBLIC_URL`** in the root `.env` (default `http://localhost:1337`). The frontend is built with this so the browser talks to your backend.                                                        |
 | **Strapi API token** | **Not automatic.** Create in Strapi Admin, put in `.strapi_token`, then rebuild frontend.                                                                 |
 | **Storage (Docker)** | Backend runs with **`STORAGE_PROVIDER=local`** by default. Uploads go to the `backend_uploads` volume (`./public/uploads` in the container).                                                                               |

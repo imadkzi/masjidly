@@ -1,3 +1,20 @@
+## 1.0.1 – 2026-03-02
+
+- **Infrastructure and Docker improvements.**
+
+### Fixed
+
+- **Strapi Docker secrets stability**
+  - Persist Strapi internal secrets (`APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`) to a dedicated `backend_secrets` volume so they are stable across container rebuilds and restarts.
+  - Ensure the Strapi Admin API token used by the frontend remains valid across backend restarts, as long as Docker volumes (`postgres_data`, `backend_secrets`) are not deleted.
+
+### Changed
+
+- **Docker developer experience**
+  - Updated `DOCKER.md` to document secrets persistence and to recommend rebuilding the frontend with `docker compose build --no-cache frontend && docker compose up -d frontend` so the backend is not unnecessarily recreated.
+
+---
+
 ## 1.0.0 – 2026-02-23
 
 - **Major update over previous masjidly instance**, covering all changes since commit `60b0532b84976676e9bac52e92ebfb8d749f83a2`.
