@@ -1,11 +1,16 @@
 ## 1.0.2 – 2026-03-03
 
-- **Ops/cron tweak for announcements.**
+- **Ops/cron improvements for announcements.**
 
 ### Changed
 
 - **Announcement expiry cadence**
-  - Run the Strapi `announcement.deleteExpired` job every 10 minutes instead of only at midnight so expired announcements are cleared promptly even if the app isn’t running exactly at 00:00 UTC.
+  - Run the Strapi `announcement.deleteExpired` job more reliably by:
+    - Tweaking the in‑process cron cadence.
+    - Adding an HTTP endpoint (`POST /api/internal/cron/announcements-expiry`) that can be triggered by Railway’s Cron Schedule using a shared `CRON_SECRET`.
+- **Docs and env templates**
+  - Documented Docker/Railway cron behaviour and configuration in `README.md` and `DOCKER.md`.
+  - Updated `backend/.env.example` and backend README to include `CRON_ENABLED` and `CRON_SECRET` guidance.
 
 ---
 
