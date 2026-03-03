@@ -210,6 +210,15 @@ To set up Cloudinary with Strapi, ensure you have the required environment varia
 4. **Access Your Strapi Admin**:
    - After deployment, note the Railway domain, e.g. `https://your-strapi-app.up.railway.app/admin`
    - Create your admin account.
+5. **Configure announcement expiry cron (Railway Cron Schedule)**:
+   - In the backend service, add a variable such as `CRON_SECRET=<long-random-hex>`.
+   - In **Settings → Cron Schedule**, add a schedule with:
+     - Schedule: `0 0 * * *` (midnight UTC).
+     - Command (replace with your real domain and secret):
+       ```bash
+       curl -sS -X POST "https://your-strapi-app.up.railway.app/api/internal/cron/announcements-expiry?secret='CRON_SECRET''" || true
+       ```
+   - This uses the internal HTTP endpoint to run `announcement.deleteExpired` once per day, independent of Strapi’s in‑process cron.
 
 ### Docker (Local Stack)
 
@@ -218,6 +227,7 @@ For an offline/local setup that runs Postgres, Strapi, and the Vue frontend enti
 - The Docker Compose stack (`postgres`, `masjidly-backend`, `masjidly-frontend`).
 - Automatic generation and persistence of Strapi secrets in Docker volumes.
 - How to rebuild the frontend with a new Strapi API token without recreating the backend.
+- How to enable cron (`CRON_ENABLED=true` in the root `.env`) so the Docker backend runs the nightly announcement‑expiry job at midnight.
 
 ---
 
