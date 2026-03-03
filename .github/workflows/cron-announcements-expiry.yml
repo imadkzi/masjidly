@@ -1,0 +1,18 @@
+name: Announcement expiry cron
+
+on:
+  schedule:
+    # Daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual run
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger announcement expiry
+        run: |
+          curl -sf -X POST "${STRAPI_CRON_URL}?secret=${CRON_SECRET}"
+        env:
+          STRAPI_CRON_URL: ${{ secrets.STRAPI_CRON_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
