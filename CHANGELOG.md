@@ -1,3 +1,14 @@
+## 1.0.2 – 2026-03-03
+
+- **Ops/cron tweak for announcements.**
+
+### Changed
+
+- **Announcement expiry cadence**
+  - Run the Strapi `announcement.deleteExpired` job every 10 minutes instead of only at midnight so expired announcements are cleared promptly even if the app isn’t running exactly at 00:00 UTC.
+
+---
+
 ## 1.0.1 – 2026-03-02
 
 - **Infrastructure and Docker improvements.**
