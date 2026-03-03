@@ -9,7 +9,7 @@
 
 module.exports = {
   // Every minute (for testing) — change to '0 0 * * *' for production (midnight daily)
-  "0 0 * * *": async ({ strapi }) => {
+  "*/10 * * * *": async ({ strapi }) => {
     const { deleted } = await strapi
       .service("api::announcement.announcement")
       .deleteExpired();
