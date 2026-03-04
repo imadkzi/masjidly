@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "ramadan_settings",
+  "info": {
+    "singularName": "ramadan-setting",
+    "pluralName": "ramadan-settings",
+    "displayName": "Ramadan Setting"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "taraweehDuaDurationMins": {
+      "type": "integer",
+      "default": 90
+    },
+    "showRamadanBanner": {
+      "type": "boolean",
+      "default": true
+    },
+    "taraweehDuaImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

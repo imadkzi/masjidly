@@ -462,6 +462,77 @@ export interface ApiAnnouncementAnnouncement
   };
 }
 
+export interface ApiMasjidSettingMasjidSetting extends Struct.SingleTypeSchema {
+  collectionName: 'masjid_settings';
+  info: {
+    displayName: 'Masjid Setting';
+    pluralName: 'masjid-settings';
+    singularName: 'masjid-setting';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    customPrimaryColor: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::masjid-setting.masjid-setting'
+    > &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images', true>;
+    masjidName: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Masjidly'>;
+    publishedAt: Schema.Attribute.DateTime;
+    showDayLabels: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    showMasjidName: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    themePreset: Schema.Attribute.Enumeration<
+      ['default', 'green', 'blue', 'purple', 'amber', 'copper', 'custom']
+    > &
+      Schema.Attribute.DefaultTo<'default'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRamadanSettingRamadanSetting
+  extends Struct.SingleTypeSchema {
+  collectionName: 'ramadan_settings';
+  info: {
+    displayName: 'Ramadan Setting';
+    pluralName: 'ramadan-settings';
+    singularName: 'ramadan-setting';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::ramadan-setting.ramadan-setting'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    showRamadanBanner: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    taraweehDuaDurationMins: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<90>;
+    taraweehDuaImage: Schema.Attribute.Media<'images'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSalaahTimeSalaahTime extends Struct.CollectionTypeSchema {
   collectionName: 'salaah_times';
   info: {
@@ -1020,6 +1091,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
+      'api::masjid-setting.masjid-setting': ApiMasjidSettingMasjidSetting;
+      'api::ramadan-setting.ramadan-setting': ApiRamadanSettingRamadanSetting;
       'api::salaah-time.salaah-time': ApiSalaahTimeSalaahTime;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

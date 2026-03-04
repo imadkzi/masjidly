@@ -39,13 +39,11 @@ See **`frontend/.env.example`** for the full list. Key ones:
 VITE_STRAPI_URL=http://localhost:1337
 VITE_STRAPI_API_TOKEN=...
 
-# Optional: show Today/Tomorrow labels in the timetable (per deployment)
-VITE_SHOW_PRAYER_DAY_LABELS=false
 ```
 
 - `VITE_STRAPI_URL` – Base URL of the Strapi backend (without `/api`).
 - `VITE_STRAPI_API_TOKEN` – Strapi API token used by the frontend to fetch data.
-- `VITE_SHOW_PRAYER_DAY_LABELS` – When `"true"`, timetable rows show “Fajr Today”, “Zuhr Tomorrow”, etc.
+- `showDayLabels (Strapi)` – Configure in Strapi Admin → Masjid Setting. When enabled, timetable rows show “Fajr Today”, “Zuhr Tomorrow”, etc.
 
 ---
 

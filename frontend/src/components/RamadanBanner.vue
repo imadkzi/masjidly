@@ -1,13 +1,19 @@
 <script setup>
+import { computed } from "vue";
 import { useRamadanTimes } from "../composables/useRamadanTimes";
+import { useRamadanSettings } from "../composables/useRamadanSettings";
 
 const { isRamadan, sehriEndTime, iftarTime, sehriLabel, iftarLabel } =
   useRamadanTimes();
+const { settings: ramadanSettings } = useRamadanSettings();
+const showBanner = computed(
+  () => isRamadan.value && ramadanSettings.value.showRamadanBanner
+);
 </script>
 
 <template>
   <div
-    v-if="isRamadan"
+    v-if="showBanner"
     class="ramadan-banner"
     role="region"
     aria-label="Ramadan key times"

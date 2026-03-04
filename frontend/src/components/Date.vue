@@ -2,8 +2,15 @@
 import { computed } from "vue";
 import moment from "moment-hijri";
 import { useClock } from "../composables/useClock.js";
+import { useMasjidSettings } from "../composables/useMasjidSettings.js";
+import logoDefault from "../assets/logo-full.svg";
 
 const { now } = useClock();
+const { settings } = useMasjidSettings();
+
+const logoUrl = computed(() => settings.value.logo || logoDefault);
+const masjidName = computed(() => settings.value.masjidName || "");
+const showMasjidName = computed(() => settings.value.showMasjidName ?? true);
 
 // Current time string (updating via the shared clock)
 const currentTime = computed(() =>
@@ -36,8 +43,8 @@ const hijri = computed(() => {
   <header role="banner">
     <div class="header-row">
       <div class="header-section logo-container">
-        <img src="../assets/logo-full.svg" alt="Masjidly" class="logo" />
-        <span aria-hidden="true"></span>
+        <img :src="logoUrl" :alt="masjidName || 'Masjidly'" class="logo" />
+        <span v-if="showMasjidName && masjidName" aria-hidden="true">{{ masjidName }}</span>
       </div>
       <div class="header-section time-container" v-if="currentTime">
         <time
@@ -106,7 +113,7 @@ header {
     gap: 16px;
 
     img {
-      height: 64px;
+      height: 75px;
       width: auto;
       transition: filter 0.3s ease;
     }

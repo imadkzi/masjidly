@@ -34,6 +34,8 @@
 - **No External Devices Needed**: Display Masjidly on **any smart TV browser**—no extra hardware required.
 - **Prayer Times Management**: Easily add, edit, or schedule prayer times in Strapi’s admin panel.
 - **Announcements**: Post announcements that display dynamically on the frontend.
+- **Masjid Branding**: Configure masjid name, logo, theme, and day labels via **Masjid Setting** in Strapi. Page title, PWA name, and apple-mobile-web-app-title use the masjid name.
+- **Ramadan Settings**: Configure Taraweeh dua duration, custom image, and Ramadan banner visibility via **Ramadan Setting** in Strapi.
 - **Lightweight & Headless**: Vue.js consumes data from Strapi’s API.
 - **Automated Deployments**: Frontend auto-builds on Netlify, backend auto-deploys on Railway.
 
@@ -106,7 +108,6 @@ For the **Vue.js** frontend, you might have `.env` variables like:
 ```bash
 VITE_STRAPI_URL=https://your-strapi-railway-url
 VITE_STRAPI_API_TOKEN=your_strapi_api_token
-VITE_SHOW_PRAYER_DAY_LABELS=false
 ```
 
 (See `frontend/.env.example` for the current set used by this repo.)
@@ -228,6 +229,15 @@ For an offline/local setup that runs Postgres, Strapi, and the Vue frontend enti
 - Automatic generation and persistence of Strapi secrets in Docker volumes.
 - How to rebuild the frontend with a new Strapi API token without recreating the backend.
 - How to enable cron (`CRON_ENABLED=true` in the root `.env`) so the Docker backend runs the nightly announcement‑expiry job at midnight.
+
+### Strapi Content Types
+
+The frontend fetches data from these Strapi APIs:
+
+- **masjid-setting** (single): Masjid name, logo, theme preset, custom primary color, show day labels.
+- **ramadan-setting** (single): Taraweeh dua duration (mins), taraweeh dua image, show Ramadan banner.
+- **announcements** (collection): Slideshow images and titles.
+- **salaah-times** (collection): Prayer times timetable.
 
 ---
 

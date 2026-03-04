@@ -86,7 +86,7 @@ const props = defineProps({
 
   &__separator {
     font-size: $font-size-large;
-    color: var(--color-next-prayer-text-dark);
+    color: var(--color-next-prayer-text);
     font-weight: $font-weight-bold;
     letter-spacing: 0.05em;
   }
@@ -94,7 +94,7 @@ const props = defineProps({
   &__countdown {
     font-size: $font-size-xxlarge;
     font-weight: $font-weight-extra-bold;
-    color: var(--color-next-prayer-text-dark);
+    color: var(--color-next-prayer-text);
     white-space: nowrap;
   }
 

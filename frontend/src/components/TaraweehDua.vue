@@ -1,5 +1,12 @@
 <script setup>
-import taraweehDuaImage from "../assets/taraweeh-dua.png";
+import { computed } from "vue";
+import { useRamadanSettings } from "../composables/useRamadanSettings";
+import taraweehDuaImageFallback from "../assets/taraweeh-dua.png";
+
+const { settings: ramadanSettings } = useRamadanSettings();
+const taraweehDuaImage = computed(
+  () => ramadanSettings.value.taraweehDuaImage || taraweehDuaImageFallback
+);
 </script>
 
 <template>

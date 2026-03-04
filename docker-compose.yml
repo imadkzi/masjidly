@@ -3,6 +3,8 @@ services:
     image: postgres:16-alpine
     container_name: masjidly-postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"  # Expose for local Strapi (npm run develop) to connect
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-strapi}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strapi}
@@ -55,7 +57,6 @@ services:
       args:
         VITE_STRAPI_URL: ${PUBLIC_URL:-http://localhost:1337}
         VITE_ENABLE_SERVER_LOGS: ${VITE_ENABLE_SERVER_LOGS:-false}
-        VITE_SHOW_PRAYER_DAY_LABELS: ${VITE_SHOW_PRAYER_DAY_LABELS:-false}
       secrets:
         - strapi_token
     container_name: masjidly-frontend

@@ -1,12 +1,13 @@
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { usePrayerTimesStore } from "../stores/prayerTimes";
 import { useClock } from "./useClock";
+import { useRamadanSettings } from "./useRamadanSettings";
 import { time24ToSeconds } from "../utils/timeUtils";
 import { PRAYER_NAMES } from "../utils/constants";
 import { isRamadanNow } from "../utils/ramadanUtils";
 
 const START_MINS_AFTER_ISHA_JAMAT = 15;
-const DURATION_MINS = 90;
+const DEFAULT_DURATION_MINS = 90;
 const SECONDS_PER_DAY = 24 * 3600;
 const NOON_SEC = 12 * 3600;
 
@@ -17,7 +18,8 @@ function getLocalDateString(date) {
   return `${y}-${m}-${d}`;
 }
 
-function inTaraweehDuaWindow(now, prayers) {
+function inTaraweehDuaWindow(now, prayers, durationMins) {
+  const dur = durationMins > 0 ? durationMins : DEFAULT_DURATION_MINS;
   const currentSec =
     now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   if (!prayers?.length) return false;
@@ -29,7 +31,7 @@ function inTaraweehDuaWindow(now, prayers) {
   if (ishaSec == null) return false;
   if (ishaSec < NOON_SEC) return false;
   const startSec = ishaSec + START_MINS_AFTER_ISHA_JAMAT * 60;
-  const endSec = ishaSec + (START_MINS_AFTER_ISHA_JAMAT + DURATION_MINS) * 60;
+  const endSec = ishaSec + (START_MINS_AFTER_ISHA_JAMAT + dur) * 60;
   let inWindow;
   if (endSec <= SECONDS_PER_DAY) {
     inWindow = currentSec >= startSec && currentSec < endSec;
@@ -42,6 +44,10 @@ function inTaraweehDuaWindow(now, prayers) {
 export function useTaraweehDua() {
   const store = usePrayerTimesStore();
   const { now } = useClock();
+  const { settings: ramadanSettings } = useRamadanSettings();
+  const durationMins = computed(
+    () => ramadanSettings.value.taraweehDuaDurationMins ?? DEFAULT_DURATION_MINS
+  );
   const showTaraweehDua = ref(false);
   const windowEndedForDate = ref(null);
 
@@ -60,7 +66,7 @@ export function useTaraweehDua() {
     // updatedTodayData can swap in tomorrow's Isha after today's has passed.
     const data = store.originalTodayData;
     const inWindow = data?.length
-      ? inTaraweehDuaWindow(now.value, data)
+      ? inTaraweehDuaWindow(now.value, data, durationMins.value)
       : false;
     showTaraweehDua.value = inWindow;
     if (wasShowing && !inWindow) {
@@ -71,6 +77,7 @@ export function useTaraweehDua() {
   update();
 
   watch(now, update);
+  watch(durationMins, update);
   watch(() => [store.originalTodayData, store.updatedTodayData], update, {
     deep: true,
   });

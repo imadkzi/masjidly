@@ -30,24 +30,32 @@ Masjidly can be shipped in two ways:
   - Error handling and optional logging in the announcements component.
   - *(Future)* Retry logic for temporary API issues.
 
+- **Admin users and password reset (non-tech-friendly)** – required before ship
+  - Replace expensive SendGrid with free Brevo SMTP for admin invite and forgot-password emails (300 emails/day free).
+  - Add reset-link helper page for when email is not configured: Super Admin visits `/api/internal/admin-reset-link/form`, enters email + secret, copies link, shares via WhatsApp. Works for Docker and Railway.
+
 ---
 
-## Phase 2 – Per‑masjid configuration
+## Phase 2 – Per‑masjid configuration ✓ done (core)
 
 With Cloud and Local deployment, each masjid runs its own instance. Per‑masjid settings avoid repeated env changes and make admin easier.
 
-- **`masjid-settings` single type (Strapi)**
+- **`masjid-settings` single type (Strapi)** ✓ done
   - Store high‑level settings:
-    - Masjid name, logo, timezone.
-    - Whether to show Today/Tomorrow labels.
-    - Whether to show the Ramadan banner.
-    - Announcement rotation duration and similar options.
+    - Masjid name, logo ✓
+    - Whether to show Today/Tomorrow labels ✓
+    - Whether to show the Ramadan banner ✓ (via `ramadan-setting` single type)
+    - *(Future)* Timezone.
+    - *(Future)* Announcement rotation duration and similar options.
 
-- **Frontend configuration layer**
-  - Add a composable/store (e.g. `useMasjidSettings`) that:
-    - Fetches `/api/masjid-settings` on start.
-    - Exposes simple flags/values (`showDayLabels`, `showRamadanBanner`, `rotationSeconds`, etc.) to components.
-  - Reduce use of hard‑coded values or env flags in favour of configuration.
+- **`ramadan-settings` single type (Strapi)** ✓ done
+  - Taraweeh dua duration, image; show Ramadan banner.
+
+- **Frontend configuration layer** ✓ done
+  - `useMasjidSettings` fetches `/api/masjid-setting` on start; exposes masjidName, logo, themePreset, customPrimaryColor, showDayLabels.
+  - `useRamadanSettings` fetches `/api/ramadan-setting`; exposes taraweehDuaDurationMins, taraweehDuaImage, showRamadanBanner.
+  - `useMasjidBranding` applies masjid name to page title, PWA manifest, apple-mobile-web-app-title.
+  - *(Future)* `rotationSeconds` from Strapi.
 
 ---
 

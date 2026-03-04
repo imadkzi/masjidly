@@ -1,0 +1,48 @@
+{
+  "kind": "singleType",
+  "collectionName": "masjid_settings",
+  "info": {
+    "singularName": "masjid-setting",
+    "pluralName": "masjid-settings",
+    "displayName": "Masjid Setting"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "masjidName": {
+      "type": "string",
+      "default": "Masjidly"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"]
+    },
+    "showMasjidName": {
+      "type": "boolean",
+      "default": false
+    },
+    "themePreset": {
+      "type": "enumeration",
+      "default": "default",
+      "enum": [
+        "default",
+        "green",
+        "blue",
+        "purple",
+        "amber",
+        "copper",
+        "custom"
+      ]
+    },
+    "customPrimaryColor": {
+      "type": "string"
+    },
+    "showDayLabels": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

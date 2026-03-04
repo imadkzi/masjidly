@@ -1,0 +1,237 @@
+// Theme presets: set via data-theme-preset on document root.
+// Timetable panel + rows use --color-timetable-* vars.
+// Active/next-prayer use --color-active-* and --color-next-prayer-*.
+
+// Default: neutral glass
+:root,
+[data-theme-preset="default"] {
+  --color-timetable-panel-bg: var(--color-panel-bg);
+  --color-timetable-panel-border: var(--color-panel-border);
+  --color-timetable-row-bg: rgba(255, 255, 255, 0.06);
+  --color-timetable-row-border: rgba(255, 255, 255, 0.15);
+}
+
+// Green: Madni preset – white/slate panel, green glass rows
+[data-theme-preset="green"] {
+  --color-timetable-panel-bg: #ffffff;
+  --color-timetable-panel-border: rgba(45, 146, 90, 0.35);
+  --color-timetable-row-bg: rgba(98, 183, 124, 0.18);
+  --color-timetable-row-border: rgba(45, 146, 90, 0.3);
+  --color-next-prayer-bg: rgba(134, 239, 172, 0.45);
+  --color-next-prayer-border: rgba(34, 197, 94, 0.5);
+  --color-next-prayer-text: #000000;
+  --color-active-bg: rgba(134, 239, 172, 0.75);
+  --color-active-border: rgba(22, 163, 74, 0.9);
+  --color-active-glow: rgba(34, 197, 94, 0.6);
+  --color-ramadan-label-text: rgba(22, 101, 52, 0.95);
+}
+
+[data-theme="dark"][data-theme-preset="green"] {
+  --color-timetable-panel-bg: #1e293b;
+  --color-timetable-panel-border: rgba(98, 183, 124, 0.35);
+  --color-timetable-row-bg: rgba(98, 183, 124, 0.15);
+  --color-timetable-row-border: rgba(98, 183, 124, 0.3);
+  --color-next-prayer-bg: rgba(34, 197, 94, 0.15);
+  --color-next-prayer-border: rgba(34, 197, 94, 0.3);
+  --color-next-prayer-text: #86efac;
+  --color-active-bg: rgba(34, 197, 94, 0.35);
+  --color-active-border: rgba(34, 197, 94, 0.6);
+  --color-active-glow: rgba(34, 197, 94, 0.5);
+  --color-ramadan-label-text: rgba(134, 239, 172, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-theme-preset="green"] {
+    --color-timetable-panel-bg: #1e293b;
+    --color-timetable-panel-border: rgba(98, 183, 124, 0.35);
+    --color-timetable-row-bg: rgba(98, 183, 124, 0.15);
+    --color-timetable-row-border: rgba(98, 183, 124, 0.3);
+    --color-next-prayer-bg: rgba(34, 197, 94, 0.15);
+    --color-next-prayer-border: rgba(34, 197, 94, 0.3);
+    --color-next-prayer-text: #86efac;
+    --color-active-bg: rgba(34, 197, 94, 0.35);
+    --color-active-border: rgba(34, 197, 94, 0.6);
+    --color-active-glow: rgba(34, 197, 94, 0.5);
+    --color-ramadan-label-text: rgba(134, 239, 172, 0.95);
+  }
+}
+
+// Blue: calm mosque blue
+[data-theme-preset="blue"] {
+  --color-timetable-panel-bg: #ffffff;
+  --color-timetable-panel-border: rgba(59, 130, 246, 0.35);
+  --color-timetable-row-bg: rgba(96, 165, 250, 0.18);
+  --color-timetable-row-border: rgba(59, 130, 246, 0.3);
+  --color-next-prayer-bg: rgba(147, 197, 253, 0.45);
+  --color-next-prayer-border: rgba(59, 130, 246, 0.5);
+  --color-next-prayer-text: #000000;
+  --color-active-bg: rgba(147, 197, 253, 0.6);
+  --color-active-border: rgba(37, 99, 235, 0.8);
+  --color-active-glow: rgba(59, 130, 246, 0.5);
+  --color-ramadan-label-text: rgba(30, 64, 175, 0.95);
+}
+
+[data-theme="dark"][data-theme-preset="blue"] {
+  --color-timetable-panel-bg: #1e293b;
+  --color-timetable-panel-border: rgba(96, 165, 250, 0.35);
+  --color-timetable-row-bg: rgba(96, 165, 250, 0.12);
+  --color-timetable-row-border: rgba(96, 165, 250, 0.3);
+  --color-next-prayer-bg: rgba(59, 130, 246, 0.2);
+  --color-next-prayer-border: rgba(59, 130, 246, 0.4);
+  --color-next-prayer-text: #dbeafe;
+  --color-active-bg: rgba(59, 130, 246, 0.3);
+  --color-active-border: rgba(96, 165, 250, 0.6);
+  --color-active-glow: rgba(59, 130, 246, 0.4);
+  --color-ramadan-label-text: #e0f2fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-theme-preset="blue"] {
+    --color-timetable-panel-bg: #1e293b;
+    --color-timetable-panel-border: rgba(96, 165, 250, 0.35);
+    --color-timetable-row-bg: rgba(96, 165, 250, 0.12);
+    --color-timetable-row-border: rgba(96, 165, 250, 0.3);
+    --color-next-prayer-bg: rgba(59, 130, 246, 0.2);
+    --color-next-prayer-border: rgba(59, 130, 246, 0.4);
+    --color-next-prayer-text: #dbeafe;
+    --color-active-bg: rgba(59, 130, 246, 0.3);
+    --color-active-border: rgba(96, 165, 250, 0.6);
+    --color-active-glow: rgba(59, 130, 246, 0.4);
+    --color-ramadan-label-text: #e0f2fe;
+  }
+}
+
+// Purple: indigo/purple-blue – distinct from sky blue
+[data-theme-preset="purple"] {
+  --color-timetable-panel-bg: #ffffff;
+  --color-timetable-panel-border: rgba(79, 70, 229, 0.35);
+  --color-timetable-row-bg: rgba(129, 140, 248, 0.18);
+  --color-timetable-row-border: rgba(99, 102, 241, 0.3);
+  --color-next-prayer-bg: rgba(165, 180, 252, 0.45);
+  --color-next-prayer-border: rgba(99, 102, 241, 0.5);
+  --color-next-prayer-text: #000000;
+  --color-active-bg: rgba(165, 180, 252, 0.6);
+  --color-active-border: rgba(79, 70, 229, 0.85);
+  --color-active-glow: rgba(99, 102, 241, 0.5);
+  --color-ramadan-label-text: rgba(49, 46, 129, 0.95);
+}
+
+[data-theme="dark"][data-theme-preset="purple"] {
+  --color-timetable-panel-bg: #1e293b;
+  --color-timetable-panel-border: rgba(129, 140, 248, 0.35);
+  --color-timetable-row-bg: rgba(99, 102, 241, 0.12);
+  --color-timetable-row-border: rgba(129, 140, 248, 0.3);
+  --color-next-prayer-bg: rgba(79, 70, 229, 0.2);
+  --color-next-prayer-border: rgba(99, 102, 241, 0.4);
+  --color-next-prayer-text: #c7d2fe;
+  --color-active-bg: rgba(79, 70, 229, 0.3);
+  --color-active-border: rgba(129, 140, 248, 0.6);
+  --color-active-glow: rgba(99, 102, 241, 0.4);
+  --color-ramadan-label-text: #c7d2fe;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-theme-preset="purple"] {
+    --color-timetable-panel-bg: #1e293b;
+    --color-timetable-panel-border: rgba(129, 140, 248, 0.35);
+    --color-timetable-row-bg: rgba(99, 102, 241, 0.12);
+    --color-timetable-row-border: rgba(129, 140, 248, 0.3);
+    --color-next-prayer-bg: rgba(79, 70, 229, 0.2);
+    --color-next-prayer-border: rgba(99, 102, 241, 0.4);
+    --color-next-prayer-text: #c7d2fe;
+    --color-active-bg: rgba(79, 70, 229, 0.3);
+    --color-active-border: rgba(129, 140, 248, 0.6);
+    --color-active-glow: rgba(99, 102, 241, 0.4);
+    --color-ramadan-label-text: #c7d2fe;
+  }
+}
+
+// Copper: brown-orange metallic – distinct from amber’s yellow-gold
+[data-theme-preset="copper"] {
+  --color-timetable-panel-bg: #ffffff;
+  --color-timetable-panel-border: rgba(154, 52, 18, 0.35);
+  --color-timetable-row-bg: rgba(234, 88, 12, 0.15);
+  --color-timetable-row-border: rgba(194, 65, 12, 0.3);
+  --color-next-prayer-bg: rgba(254, 215, 170, 0.5);
+  --color-next-prayer-border: rgba(234, 88, 12, 0.5);
+  --color-next-prayer-text: #000000;
+  --color-active-bg: rgba(254, 215, 170, 0.65);
+  --color-active-border: rgba(194, 65, 12, 0.9);
+  --color-active-glow: rgba(234, 88, 12, 0.5);
+  --color-ramadan-label-text: rgba(124, 45, 18, 0.95);
+}
+
+[data-theme="dark"][data-theme-preset="copper"] {
+  --color-timetable-panel-bg: #1e293b;
+  --color-timetable-panel-border: rgba(251, 146, 60, 0.35);
+  --color-timetable-row-bg: rgba(251, 146, 60, 0.1);
+  --color-timetable-row-border: rgba(251, 146, 60, 0.3);
+  --color-next-prayer-bg: rgba(234, 88, 12, 0.2);
+  --color-next-prayer-border: rgba(251, 146, 60, 0.4);
+  --color-next-prayer-text: #fed7aa;
+  --color-active-bg: rgba(234, 88, 12, 0.3);
+  --color-active-border: rgba(251, 146, 60, 0.6);
+  --color-active-glow: rgba(234, 88, 12, 0.4);
+  --color-ramadan-label-text: #fed7aa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-theme-preset="copper"] {
+    --color-timetable-panel-bg: #1e293b;
+    --color-timetable-panel-border: rgba(251, 146, 60, 0.35);
+    --color-timetable-row-bg: rgba(251, 146, 60, 0.1);
+    --color-timetable-row-border: rgba(251, 146, 60, 0.3);
+    --color-next-prayer-bg: rgba(234, 88, 12, 0.2);
+    --color-next-prayer-border: rgba(251, 146, 60, 0.4);
+    --color-next-prayer-text: #fed7aa;
+    --color-active-bg: rgba(234, 88, 12, 0.3);
+    --color-active-border: rgba(251, 146, 60, 0.6);
+    --color-active-glow: rgba(234, 88, 12, 0.4);
+    --color-ramadan-label-text: #fed7aa;
+  }
+}
+
+// Amber: warm gold
+[data-theme-preset="amber"] {
+  --color-timetable-panel-bg: #ffffff;
+  --color-timetable-panel-border: rgba(245, 158, 11, 0.35);
+  --color-timetable-row-bg: rgba(252, 211, 77, 0.18);
+  --color-timetable-row-border: rgba(245, 158, 11, 0.3);
+  --color-next-prayer-bg: rgba(253, 230, 138, 0.45);
+  --color-next-prayer-border: rgba(245, 158, 11, 0.5);
+  --color-next-prayer-text: #000000;
+  --color-active-bg: rgba(253, 230, 138, 0.6);
+  --color-active-border: rgba(217, 119, 6, 0.85);
+  --color-active-glow: rgba(245, 158, 11, 0.5);
+  --color-ramadan-label-text: rgba(120, 53, 15, 0.95);
+}
+
+[data-theme="dark"][data-theme-preset="amber"] {
+  --color-timetable-panel-bg: #1e293b;
+  --color-timetable-panel-border: rgba(252, 211, 77, 0.35);
+  --color-timetable-row-bg: rgba(252, 211, 77, 0.12);
+  --color-timetable-row-border: rgba(252, 211, 77, 0.3);
+  --color-next-prayer-bg: rgba(245, 158, 11, 0.2);
+  --color-next-prayer-border: rgba(245, 158, 11, 0.4);
+  --color-next-prayer-text: #fde68a;
+  --color-active-bg: rgba(245, 158, 11, 0.3);
+  --color-active-border: rgba(252, 211, 77, 0.6);
+  --color-active-glow: rgba(245, 158, 11, 0.4);
+  --color-ramadan-label-text: rgba(253, 230, 138, 0.95);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-theme-preset="amber"] {
+    --color-timetable-panel-bg: #1e293b;
+    --color-timetable-panel-border: rgba(252, 211, 77, 0.35);
+    --color-timetable-row-bg: rgba(252, 211, 77, 0.12);
+    --color-timetable-row-border: rgba(252, 211, 77, 0.3);
+    --color-next-prayer-bg: rgba(245, 158, 11, 0.2);
+    --color-next-prayer-border: rgba(245, 158, 11, 0.4);
+    --color-next-prayer-text: #fde68a;
+    --color-active-bg: rgba(245, 158, 11, 0.3);
+    --color-active-border: rgba(252, 211, 77, 0.6);
+    --color-active-glow: rgba(245, 158, 11, 0.4);
+    --color-ramadan-label-text: rgba(253, 230, 138, 0.95);
+  }
+}

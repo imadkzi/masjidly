@@ -161,7 +161,7 @@ export function useRamadanTimes() {
         iftarTime.value = "";
       }
     },
-    { deep: true },
+    { deep: true, immediate: true },
   );
 
   watch(
@@ -176,7 +176,7 @@ export function useRamadanTimes() {
         }
       }
     },
-    { deep: true },
+    { deep: true, immediate: true },
   );
 
   watch(
