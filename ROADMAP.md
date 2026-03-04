@@ -4,17 +4,54 @@ This roadmap focuses on making Masjidly easy to run in any masjid, with reliable
 
 ---
 
-## Phase 1 – Stability and admin confidence (short term)
+## Deployment – Two instances
 
-- **Timetable robustness**
-  - Add **data sanity checks** on imported rows (e.g. required times present where expected, no obviously incorrect ordering such as Asr earlier than Zuhr), and surface any issues in logs or the admin UI.
+Masjidly can be shipped in two ways:
 
-- **Announcements reliability**
-  - Add modest retry / error handling in the announcements component so temporary API issues do not leave the screen blank.
+| Instance | Backend (Strapi + DB) | Frontend |
+|----------|------------------------|----------|
+| **Cloud** | Railway (Strapi + Postgres) | Netlify |
+| **Local** | Docker (backend, Postgres, frontend) | Docker |
+
+- **Cloud**: Deploy Strapi and Postgres on Railway, frontend on Netlify. Announcement expiry cron runs via GitHub Actions at midnight UTC.
+- **Local**: Use Docker Compose for a full stack. Strapi in‑process cron handles announcement expiry when `CRON_ENABLED=true`.
 
 ---
 
-## Phase 2 – Announcements v2 (richer cards)
+## Phase 1 – Stability and admin confidence (short term)
+
+- **Timetable robustness** ✓ done
+  - Lifecycle hooks normalise CSV imports (e.g. `"null"` strings from Google Sheets → `null`), avoiding invalid time format errors.
+  - *(Future)* Data sanity checks on imported rows (required times present, no incorrect ordering), surfaced in logs or admin UI.
+
+- **Announcements reliability** ✓ done
+  - Announcement expiry cron: GitHub Actions (Cloud) or Strapi in‑process (Docker) delete expired announcements at midnight.
+  - Frontend refetches at 00:10 local time.
+  - Error handling and optional logging in the announcements component.
+  - *(Future)* Retry logic for temporary API issues.
+
+---
+
+## Phase 2 – Per‑masjid configuration
+
+With Cloud and Local deployment, each masjid runs its own instance. Per‑masjid settings avoid repeated env changes and make admin easier.
+
+- **`masjid-settings` single type (Strapi)**
+  - Store high‑level settings:
+    - Masjid name, logo, timezone.
+    - Whether to show Today/Tomorrow labels.
+    - Whether to show the Ramadan banner.
+    - Announcement rotation duration and similar options.
+
+- **Frontend configuration layer**
+  - Add a composable/store (e.g. `useMasjidSettings`) that:
+    - Fetches `/api/masjid-settings` on start.
+    - Exposes simple flags/values (`showDayLabels`, `showRamadanBanner`, `rotationSeconds`, etc.) to components.
+  - Reduce use of hard‑coded values or env flags in favour of configuration.
+
+---
+
+## Phase 3 – Announcements v2 (richer cards)
 
 - **Richer announcement model in Strapi**
   - Extend the `announcement` content type to support:
@@ -32,23 +69,6 @@ This roadmap focuses on making Masjidly easy to run in any masjid, with reliable
 - **Admin UX**
   - Provide a handful of “templates” (event poster, simple notice, recurring class) documented in the README.
   - Optionally add a basic preview in Strapi so admins can see roughly how a card will look on the TV.
-
----
-
-## Phase 3 – Per‑masjid configuration
-
-- **`masjid-settings` single type (Strapi)**
-  - Store high‑level settings:
-    - Masjid name, logo, timezone.
-    - Whether to show Today/Tomorrow labels.
-    - Whether to show the Ramadan banner.
-    - Announcement rotation duration and similar options.
-
-- **Frontend configuration layer**
-  - Add a composable/store (e.g. `useMasjidSettings`) that:
-    - Fetches `/api/masjid-settings` on start.
-    - Exposes simple flags/values (`showDayLabels`, `showRamadanBanner`, `rotationSeconds`, etc.) to components.
-  - Reduce use of hard‑coded values or env flags in favour of configuration.
 
 ---
 
