@@ -1,3 +1,38 @@
+## 1.0.3 – 2026-02-23
+
+- **Ramadan settings, masjid branding, PWA manifest, roadmap.**
+
+### Added
+
+- **Ramadan setting (Strapi single type)**
+  - `taraweehDuaDurationMins` – configurable duration (default 90 mins) for the Taraweeh duʿā window after ʿIshā Jamāt.
+  - `taraweehDuaImage` – optional custom image (falls back to built-in asset if not set).
+  - `showRamadanBanner` – toggle to show or hide the Ramadan banner (Sehri/Iftar times) during Ramadan.
+
+- **Frontend configuration**
+  - `useRamadanSettings` composable fetches Ramadan settings from `/api/ramadan-setting`.
+  - `useMasjidBranding` composable applies masjid name to document title, PWA manifest (`name`, `short_name`), and `apple-mobile-web-app-title`.
+  - Theme presets and `ThemeToggle` component for light/dark switching.
+
+### Changed
+
+- **Taraweeh duʿā**
+  - Duration now configurable via `ramadan-setting` (was hardcoded 90 mins).
+  - Image now from Strapi when set; otherwise uses built-in fallback.
+
+- **Ramadan banner**
+  - Visibility controlled by `showRamadanBanner` in ramadan-setting.
+
+- **PWA and page title**
+  - Document title, PWA manifest name/short_name, and apple-mobile-web-app-title now use masjid name from `masjid-setting`.
+
+- **Documentation**
+  - Updated `README.md` with masjid branding and Ramadan settings features; added Strapi content types section.
+  - Updated `DOCKER.md` with API token permissions for `masjid-setting` and `ramadan-setting`.
+  - Updated `ROADMAP.md`: Phase 2 (per‑masjid configuration) marked done; admin users and password reset moved to Phase 1 as pre-ship requirement.
+
+---
+
 ## 1.0.2 – 2026-03-03
 
 - **Ops/cron improvements for announcements.**
