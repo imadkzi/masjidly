@@ -158,7 +158,108 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ---
 
-## 10. Quick reference
+## 10. Auto-start on boot (run compose + open browser)
+
+You can have Docker Compose start and both the frontend and admin open in your browser when the PC restarts or you log in.
+
+**Prerequisite:** Docker Desktop (or Docker Engine on Linux) must be set to **start automatically on boot/login** before any of this.
+
+### Windows (Task Scheduler)
+
+1. Open **Task Scheduler** (search "Task Scheduler" in Start).
+2. **Create Basic Task** → Name: `Masjidly Start` → Next.
+3. Trigger: **When I log on** → Next.
+4. Action: **Start a program** → Next.
+5. **Program/script:** `powershell.exe`
+   **Add arguments:** `-ExecutionPolicy Bypass -File "C:\path\to\masjidly\scripts\start-windows.ps1"`  
+   (Replace `C:\path\to\masjidly` with your project path.)
+6. Finish.
+7. In Task Scheduler, right‑click the task → **Properties** → ensure **Run with highest privileges** is off; optionally **Run whether user is logged on or not** if you want it at boot before login.
+
+If PowerShell execution policy blocks the script, use the batch file instead:
+
+- **Program/script:** `C:\path\to\masjidly\scripts\start-windows.bat`
+
+### macOS (launchd)
+
+Create `~/Library/LaunchAgents/com.masjidly.startup.plist`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.masjidly.startup</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/path/to/masjidly/scripts/start-unix.sh</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>WorkingDirectory</key>
+  <string>/path/to/masjidly</string>
+</dict>
+</plist>
+```
+
+Replace `/path/to/masjidly` with your project path. Then:
+
+```bash
+chmod +x /path/to/masjidly/scripts/start-unix.sh
+launchctl load ~/Library/LaunchAgents/com.masjidly.startup.plist
+```
+
+### Linux (systemd or cron)
+
+**Option A – systemd user service**
+
+Create `~/.config/systemd/user/masjidly-startup.service`:
+
+```ini
+[Unit]
+Description=Masjidly Docker Compose on login
+After=network-online.target docker.service
+Wants=network-online.target docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/path/to/masjidly/scripts/start-unix.sh
+RemainAfterExit=yes
+WorkingDirectory=/path/to/masjidly
+
+[Install]
+WantedBy=default.target
+```
+
+Then:
+
+```bash
+chmod +x /path/to/masjidly/scripts/start-unix.sh
+systemctl --user daemon-reload
+systemctl --user enable masjidly-startup.service
+loginctl enable-linger $USER   # Allows user services to run at boot without login
+```
+
+**Option B – cron @reboot**
+
+```bash
+chmod +x /path/to/masjidly/scripts/start-unix.sh
+crontab -e
+```
+
+Add (replace with your path):
+
+```
+@reboot sleep 60 && /path/to/masjidly/scripts/start-unix.sh
+```
+
+The `sleep 60` gives Docker and the network time to start.
+
+---
+
+## 11. Quick reference
 
 | Goal                            | Action                                                                                                                                                      |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
