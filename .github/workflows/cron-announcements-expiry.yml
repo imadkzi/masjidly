@@ -1,10 +1,14 @@
+# Announcement expiry cron – triggers Railway backend(s).
+# Single instance: STRAPI_CRON_URL + CRON_SECRET
+# Multiple instances: STRAPI_CRON_URLS (comma-separated) + CRON_SECRET
+#   e.g. https://a.up.railway.app/api/internal/cron/announcements-expiry,https://b.up.railway.app/...
+# Fallback: use CRON_ENABLED=true for in-process Strapi cron if this workflow is unreliable.
 name: Announcement expiry cron
 
 on:
   schedule:
-    # Daily at midnight UTC
     - cron: '0 0 * * *'
-  workflow_dispatch: # Allow manual run
+  workflow_dispatch:
 
 jobs:
   trigger:
@@ -12,7 +16,22 @@ jobs:
     steps:
       - name: Trigger announcement expiry
         run: |
-          curl -sf -X POST "${STRAPI_CRON_URL}?secret=${CRON_SECRET}"
+          if [ -n "$STRAPI_CRON_URLS" ]; then
+            IFS=',' read -ra URLS <<< "$STRAPI_CRON_URLS"
+            for url in "${URLS[@]}"; do
+              url=$(echo "$url" | xargs)
+              [ -z "$url" ] && continue
+              echo "Triggering $url"
+              curl -sf -X POST "${url}?secret=${CRON_SECRET}" || echo "Failed: $url"
+            done
+          elif [ -n "$STRAPI_CRON_URL" ]; then
+            echo "Triggering $STRAPI_CRON_URL"
+            curl -sf -X POST "${STRAPI_CRON_URL}?secret=${CRON_SECRET}"
+          else
+            echo "Neither STRAPI_CRON_URLS nor STRAPI_CRON_URL is set. Skipping."
+            exit 1
+          fi
         env:
           STRAPI_CRON_URL: ${{ secrets.STRAPI_CRON_URL }}
+          STRAPI_CRON_URLS: ${{ secrets.STRAPI_CRON_URLS }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}

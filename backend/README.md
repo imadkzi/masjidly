@@ -49,7 +49,7 @@ Key variables (non‑exhaustive):
   - `CLOUDINARY_KEY`, `CLOUDINARY_NAME`, `CLOUDINARY_SECRET`
 - Cron:
   - `CRON_ENABLED=true` – enables Strapi cron jobs (including announcement expiry) when running Strapi directly or via Docker.
-  - `CRON_SECRET` – optional shared secret used by the internal HTTP announcement‑expiry endpoint so external schedulers (e.g. Railway Cron Schedule) can safely trigger it.
+  - `CRON_SECRET` – optional shared secret used by the internal HTTP announcement‑expiry endpoint so external schedulers (e.g. GitHub Actions) can safely trigger it.
 
 Refer to the root `README.md` for more detailed deployment notes.
 

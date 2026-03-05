@@ -211,15 +211,11 @@ To set up Cloudinary with Strapi, ensure you have the required environment varia
 4. **Access Your Strapi Admin**:
    - After deployment, note the Railway domain, e.g. `https://your-strapi-app.up.railway.app/admin`
    - Create your admin account.
-5. **Configure announcement expiry cron (Railway Cron Schedule)**:
-   - In the backend service, add a variable such as `CRON_SECRET=<long-random-hex>`.
-   - In **Settings → Cron Schedule**, add a schedule with:
-     - Schedule: `0 0 * * *` (midnight UTC).
-     - Command (replace with your real domain and secret):
-       ```bash
-       curl -sS -X POST "https://your-strapi-app.up.railway.app/api/internal/cron/announcements-expiry?secret='CRON_SECRET''" || true
-       ```
-   - This uses the internal HTTP endpoint to run `announcement.deleteExpired` once per day, independent of Strapi’s in‑process cron.
+s t5. **Configure announcement expiry cron** (choose one):
+   - **Option A – GitHub Actions** (recommended for one repo, multiple Railway instances):  
+     Add repo secrets `CRON_SECRET` and either `STRAPI_CRON_URL` (single instance) or `STRAPI_CRON_URLS` (comma-separated URLs). The workflow runs daily at midnight UTC.
+   - **Option B – In-process Strapi cron**:  
+     Set `CRON_ENABLED=true` in each backend’s Railway env. Strapi runs the expiry job at midnight UTC internally. No external trigger needed. (Railway Cron Schedule runs the service start command, not arbitrary curl commands.)
 
 ### Docker (Local Stack)
 
