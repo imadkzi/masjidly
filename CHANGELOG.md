@@ -1,3 +1,18 @@
+## 1.0.4 – 2026-02-23
+
+- **Railway Nixpacks, multi-instance cron, cron docs fix.**
+
+### Changed
+
+- **Railway deployment**
+  - Renamed `backend/Dockerfile` and `frontend/Dockerfile` to `Dockerfile.local` so Railway uses Nixpacks instead of Docker. Local Docker Compose unchanged; `docker-compose.yml` now references `Dockerfile.local`.
+
+- **Announcement expiry cron**
+  - GitHub Action supports `STRAPI_CRON_URLS` (comma-separated) for multiple Railway instances; falls back to `STRAPI_CRON_URL` for single instance.
+  - README: Option B corrected to in-process Strapi cron (`CRON_ENABLED=true`), not Railway Cron Schedule (Railway does not run arbitrary curl commands).
+
+---
+
 ## 1.0.3 – 2026-03-04
 
 - **Masjid settings, Ramadan settings, theming, PWA manifest, auto-start scripts, roadmap.**
