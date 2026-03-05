@@ -1,18 +1,32 @@
-## 1.0.3 – 2026-03-4
+## 1.0.3 – 2026-03-04
 
-- **Ramadan settings, masjid branding, PWA manifest, roadmap.**
+- **Masjid settings, Ramadan settings, theming, PWA manifest, auto-start scripts, roadmap.**
 
 ### Added
 
-- **Ramadan setting (Strapi single type)**
+- **Masjid setting (Strapi single type)** – per-masjid branding and UI configuration.
+  - `masjidName` – masjid name (default `"Masjidly"`); used for page title, PWA manifest, `apple-mobile-web-app-title`.
+  - `logo` – optional logo image(s).
+  - `showMasjidName` – toggle to show or hide masjid name in header.
+  - `themePreset` – colour preset: `default`, `green`, `blue`, `purple`, `amber`, `copper`, or `custom`.
+  - `customPrimaryColor` – custom hex colour when `themePreset` is `custom`.
+  - `showDayLabels` – toggle to show "Today"/"Tomorrow" labels in prayer timetable.
+
+- **Ramadan setting (Strapi single type)** – Ramadan-specific behaviour.
   - `taraweehDuaDurationMins` – configurable duration (default 90 mins) for the Taraweeh duʿā window after ʿIshā Jamāt.
   - `taraweehDuaImage` – optional custom image (falls back to built-in asset if not set).
   - `showRamadanBanner` – toggle to show or hide the Ramadan banner (Sehri/Iftar times) during Ramadan.
 
-- **Frontend configuration**
-  - `useRamadanSettings` composable fetches Ramadan settings from `/api/ramadan-setting`.
-  - `useMasjidBranding` composable applies masjid name to document title, PWA manifest (`name`, `short_name`), and `apple-mobile-web-app-title`.
-  - Theme presets and `ThemeToggle` component for light/dark switching.
+- **Frontend composables**
+  - `useMasjidBranding` – applies masjid name to document title, PWA manifest (`name`, `short_name`), and `apple-mobile-web-app-title`.
+  - `useMasjidSettings` – fetches masjid-setting; provides theme preset, custom colour, logo, day labels.
+  - `useRamadanSettings` – fetches ramadan-setting; provides taraweeh duration, banner visibility, image.
+  - `useThemePreset` – applies theme preset and custom colour from masjid-setting.
+  - `ThemeToggle` component for manual light/dark switching.
+
+- **Auto-start on boot**
+  - `scripts/start-windows.ps1`, `scripts/start-windows.bat`, `scripts/start-unix.sh` – run `docker compose up -d` and open frontend + admin in browser.
+  - Documentation for Task Scheduler (Windows), launchd (macOS), and systemd/cron (Linux) in `DOCKER.md`.
 
 ### Changed
 
@@ -28,7 +42,7 @@
 
 - **Documentation**
   - Updated `README.md` with masjid branding and Ramadan settings features; added Strapi content types section.
-  - Updated `DOCKER.md` with API token permissions for `masjid-setting` and `ramadan-setting`.
+  - Updated `DOCKER.md` with API token permissions for `masjid-setting` and `ramadan-setting`; added §10 auto-start on boot.
   - Updated `ROADMAP.md`: Phase 2 (per‑masjid configuration) marked done; admin users and password reset moved to Phase 1 as pre-ship requirement.
 
 ---
