@@ -55,6 +55,7 @@ const hijri = computed(() => {
     <div class="header-row">
       <div class="header-section logo-container">
         <img
+          :key="logoUrl"
           :src="logoUrl"
           :alt="masjidName || 'Masjidly'"
           class="logo"

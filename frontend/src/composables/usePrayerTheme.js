@@ -6,8 +6,12 @@ import { PRAYER_NAMES } from "../utils/constants";
 
 const THEME_STORAGE_KEY = "theme";
 
+// Shared ref so all consumers (App, Date, etc.) react to theme changes
+let sharedIsDark = null;
+
 export function usePrayerTheme() {
-  const isDark = ref(false);
+  if (!sharedIsDark) sharedIsDark = ref(false);
+  const isDark = sharedIsDark;
   const store = usePrayerTimesStore();
   const { now } = useClock();
 
