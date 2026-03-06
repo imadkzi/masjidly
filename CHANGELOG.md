@@ -1,4 +1,4 @@
-## 1.0.4 – 2026-02-28
+## 1.0.4 – 2026-03-06
 
 - **Railway Nixpacks, multi-instance cron, cron docs fix, dark mode logo.**
 
