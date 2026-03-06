@@ -18,7 +18,16 @@
     "logo": {
       "type": "media",
       "multiple": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "darkModeLogo": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "showMasjidName": {
       "type": "boolean",

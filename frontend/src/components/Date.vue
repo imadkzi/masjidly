@@ -3,12 +3,23 @@ import { computed } from "vue";
 import moment from "moment-hijri";
 import { useClock } from "../composables/useClock.js";
 import { useMasjidSettings } from "../composables/useMasjidSettings.js";
+import { usePrayerTheme } from "../composables/usePrayerTheme.js";
 import logoDefault from "../assets/logo-full.svg";
 
 const { now } = useClock();
 const { settings } = useMasjidSettings();
+const { isDark } = usePrayerTheme();
 
-const logoUrl = computed(() => settings.value.logo || logoDefault);
+const logoUrl = computed(() => {
+  if (isDark.value && settings.value.darkModeLogo) {
+    return settings.value.darkModeLogo;
+  }
+  return settings.value.logo || logoDefault;
+});
+
+const useDarkLogoVariant = computed(
+  () => isDark.value && !!settings.value.darkModeLogo,
+);
 const masjidName = computed(() => settings.value.masjidName || "");
 const showMasjidName = computed(() => settings.value.showMasjidName ?? true);
 
@@ -43,7 +54,12 @@ const hijri = computed(() => {
   <header role="banner">
     <div class="header-row">
       <div class="header-section logo-container">
-        <img :src="logoUrl" :alt="masjidName || 'Masjidly'" class="logo" />
+        <img
+          :src="logoUrl"
+          :alt="masjidName || 'Masjidly'"
+          class="logo"
+          :class="{ 'logo--dark-variant': useDarkLogoVariant }"
+        />
         <span v-if="showMasjidName && masjidName" aria-hidden="true">{{ masjidName }}</span>
       </div>
       <div class="header-section time-container" v-if="currentTime">
@@ -244,8 +260,8 @@ header {
   }
 }
 
-/* Dark mode logo styling */
-[data-theme="dark"] .logo-container img {
+/* Dark mode: invert light logo when no dark variant is set */
+[data-theme="dark"] .logo-container img:not(.logo--dark-variant) {
   filter: brightness(0) invert(1);
 }
 </style>

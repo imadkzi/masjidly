@@ -4,6 +4,7 @@ import { fetchData, resolveStrapiMediaUrl } from "../utils/apiUtils";
 const defaults = {
   masjidName: "Masjidly",
   logo: null,
+  darkModeLogo: null,
   showMasjidName: true,
   themePreset: "default",
   customPrimaryColor: null,
@@ -21,7 +22,7 @@ async function fetchSettings(force = false) {
   error.value = null;
   fetchPromise = (async () => {
     try {
-      const data = await fetchData("/api/masjid-setting?populate=logo");
+      const data = await fetchData("/api/masjid-setting?populate=logo,darkModeLogo");
       const doc = data?.data;
       if (doc?.id || doc?.documentId) {
         const logoObj = Array.isArray(doc.logo) ? doc.logo[0] : doc.logo;
@@ -29,9 +30,15 @@ async function fetchSettings(force = false) {
           logoObj?.url ||
           logoObj?.data?.attributes?.url ||
           logoObj?.formats?.large?.url;
+        const darkLogoObj = Array.isArray(doc.darkModeLogo) ? doc.darkModeLogo[0] : doc.darkModeLogo;
+        const darkLogoUrl =
+          darkLogoObj?.url ||
+          darkLogoObj?.data?.attributes?.url ||
+          darkLogoObj?.formats?.large?.url;
         settings.value = {
           masjidName: doc.masjidName ?? defaults.masjidName,
           logo: logoUrl ? resolveStrapiMediaUrl(logoUrl) : defaults.logo,
+          darkModeLogo: darkLogoUrl ? resolveStrapiMediaUrl(darkLogoUrl) : defaults.darkModeLogo,
           showMasjidName:
             doc.showMasjidName !== undefined
               ? !!doc.showMasjidName

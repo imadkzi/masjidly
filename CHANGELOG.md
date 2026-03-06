@@ -1,6 +1,10 @@
-## 1.0.4 – 2026-02-23
+## 1.0.4 – 2026-02-28
 
-- **Railway Nixpacks, multi-instance cron, cron docs fix.**
+- **Railway Nixpacks, multi-instance cron, cron docs fix, dark mode logo.**
+
+### Added
+
+- **Dark mode logo** – Masjid Setting now has `darkModeLogo`. When the display is in dark mode, the dark logo is shown if set; otherwise the light logo is inverted as before.
 
 ### Changed
 
@@ -10,6 +14,8 @@
 - **Announcement expiry cron**
   - GitHub Action supports `STRAPI_CRON_URLS` (comma-separated) for multiple Railway instances; falls back to `STRAPI_CRON_URL` for single instance.
   - README: Option B corrected to in-process Strapi cron (`CRON_ENABLED=true`), not Railway Cron Schedule (Railway does not run arbitrary curl commands).
+
+- **Backend `.env.example`** – Added OpenSSL commands for generating secrets (`openssl rand -base64 32` for keys, `openssl rand -base64 24` for database password).
 
 ---
 
@@ -132,7 +138,7 @@
 ### Fixed
 
 - **Prayer time logic and timetable behaviour**
-  - Corrected Taraweeh window to use *today's* ʿIshā time.
+  - Corrected Taraweeh window to use _today's_ ʿIshā time.
   - Fixed day-label font sizes and overflow issues in the timetable (especially with "Today/Tomorrow" labels and at 1440px widths).
 
 - **Data imports and Strapi configuration**
@@ -148,4 +154,3 @@
 - **Documentation**
   - Updated root, frontend, and backend READMEs in British English, reflecting current environment variables, Strapi configuration, and deployment flow.
   - Added a project `ROADMAP.md` and marked timetable CSV robustness and announcement reliability work as complete.
-
