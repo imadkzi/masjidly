@@ -22,7 +22,9 @@ async function fetchSettings(force = false) {
   error.value = null;
   fetchPromise = (async () => {
     try {
-      const data = await fetchData("/api/masjid-setting?populate=logo,darkModeLogo");
+      const data = await fetchData(
+        "/api/masjid-setting?populate[0]=logo&populate[1]=darkModeLogo",
+      );
       const doc = data?.data;
       if (doc?.id || doc?.documentId) {
         const logoObj = Array.isArray(doc.logo) ? doc.logo[0] : doc.logo;
